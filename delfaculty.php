@@ -9,7 +9,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 }
 
 
-include '/home/wreed6/phpconfig/config.inc';
+include '/home/nbufordh/phpconfig/config.inc';
 // Create connection
  $conn = new mysqli($servername, $username, $password, $dbname);
  // Check connection
