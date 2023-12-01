@@ -53,13 +53,13 @@ include '/home/nbufordh/phpconfig/config.inc';
     </style>
 </head>
 <body>
-<h1 class="my-5">Hi, <b><?php echo htmlspecialchars($_SESSION["username"]); ?></b>. Welcome to the University Information System.</h1>
+<h1 class="my-5">Hi, <b><?php echo htmlspecialchars($_SESSION["username"]); ?></b>. Welcome to Poller.</h1>
     <p><nav class="nav justify-content-center">
     <a href="welcome.php" class="nav-item nav-link active">Home</a>
-    <a href="faculty-table.php" class="nav-item nav-link">View Faculty</a>
-    <a href="faculty-search.php" class="nav-item nav-link">Search Faculty</a>
-    <a href="newfaculty.php" class="nav-item nav-link">Enter New Faculty</a>
-    <a href="delfaculty.php" class="nav-item nav-link" tabindex="-1">Delete Faculty</a>
+    <a href="welcome.php" class="nav-item nav-link active">Home</a>
+    <a href="welcome.php" class="nav-item nav-link active">Account info</a>
+    <a href="faculty-table.php" class="nav-item nav-link">Complete surveys</a>
+    <a href="faculty-search.php" class="nav-item nav-link">orders/checkout</a>
 </nav>
 <p><h2>List of Current Faculty:</h2></p>
 <?php
