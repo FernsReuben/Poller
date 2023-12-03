@@ -55,8 +55,7 @@
         echo "0 results";
     }
 
-   $conn->close();
-
+    $conn->close();
     /*if (isset($_GET['selection'])){
         $_GET['selection'];
     }*/
