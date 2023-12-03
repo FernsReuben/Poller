@@ -13,6 +13,7 @@
     die("Connection failed: " . $conn->connect_error);
   }
 
+  // This part will need updated based on our login implementation
   $getUserInfo = "SELECT currency from User WHERE User_ID = $username";
   $purse = $conn->query($getUserInfo);
   
@@ -28,18 +29,21 @@
 
 <?php
 
-   $surveyQuery = "SELECT Survey_ID, company_name, value FROM Surveys";
-   $result = $conn->query($surveyQuery);
-
-   $takeOption = "Take Survey";
+    $surveyQuery = "SELECT Survey_ID, company_name, value FROM Surveys";
+    $result = $conn->query($surveyQuery);
+    $checkCompletedQuery = "SELECT Survey_ID from Completes WHERE User_ID = $username and Survey_ID = $currentSurvey";
 
     if ($result->num_rows > 0) {
-     // output data of each row
+    // output data of each row
         while($row = $result->fetch_assoc()) {
             echo "ID: " . $row["Survey_ID"]. " - Company: " . $row["company_name"]. " - Value: " . $row["value"]."<br>";
-            if()
-            echo "<button onclick=window.location.href='https://dbdev.cs.kent.edu/~tbaker60/Poller/takeSurvey.php';> $takeOption </button>";
-            echo "<br>";
+            $currentSurvey = $row["Survey_ID"];
+            $checkCompleted = $conn->query($checkCompletedQuery);
+            if($checkCompleted["Survey_ID"] == $currentSurvey) { //Survey has been taken already
+                echo "<button> Survey Taken </button><br>";
+            } else {                                             //Survey has not yet been taken
+                echo "<button onclick=window.location.href='https://dbdev.cs.kent.edu/~tbaker60/Poller/takeSurvey.php';> Take Survey </button><br>";
+            }
         }
     } else {
         echo "0 results";
