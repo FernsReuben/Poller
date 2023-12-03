@@ -28,28 +28,38 @@
 <p><br><u>List of All Surveys:</u></p>
 
 <?php
+    $currentSurvey = 1738;
+    $taking = 0;
+    //$takeSurveyButton = "<button onclick=window.location.href='https://dbdev.cs.kent.edu/~tbaker60/Poller/takeSurvey.php';> Take Survey </button><br>";
 
     $surveyQuery = "SELECT Survey_ID, company_name, value FROM Surveys";
     $result = $conn->query($surveyQuery);
     $checkCompletedQuery = "SELECT Survey_ID from Completes WHERE User_ID = $username and Survey_ID = $currentSurvey";
-
+    echo "<form action='takeSurvey.php'>";
     if ($result->num_rows > 0) {
     // output data of each row
         while($row = $result->fetch_assoc()) {
-            echo "ID: " . $row["Survey_ID"]. " - Company: " . $row["company_name"]. " - Value: " . $row["value"]."<br>";
             $currentSurvey = $row["Survey_ID"];
             $checkCompleted = $conn->query($checkCompletedQuery);
             if($checkCompleted["Survey_ID"] == $currentSurvey) { //Survey has been taken already
-                echo "<button> Survey Taken </button><br>";
+                echo "<button onclick='<p>That survey cannot be taken again</p>'> Survey Taken </button><br>";
             } else {                                             //Survey has not yet been taken
-                echo "<button onclick=window.location.href='https://dbdev.cs.kent.edu/~tbaker60/Poller/takeSurvey.php';> Take Survey </button><br>";
+                echo "<input type='radio' name='selection' value=$currentSurvey>";
+                    //
+                    //onclick=window.location.href='https://dbdev.cs.kent.edu/~tbaker60/Poller/takeSurvey.php?currentSurvey';
             }
+            echo "ID: " . $row["Survey_ID"]. " - Company: " . $row["company_name"]. " - Value: " . $row["value"]."<br>";
         }
+            echo "<input type=submit value='Begin Selected Survey'>";
     } else {
         echo "0 results";
     }
 
    $conn->close();
+
+    /*if (isset($_GET['selection'])){
+        $_GET['selection'];
+    }*/
 ?> <!-- this is the end of our php code -->
 </body>
 
