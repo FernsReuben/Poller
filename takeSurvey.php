@@ -41,12 +41,30 @@
 <?php 
     $Qarray = array($surVal/10);
     parse_str($survey["questions"],$Qarray);
+
+    echo "<form>"; //Don't think I want the action to redirect
     $i=1;
     foreach ($Qarray as $question){
         echo "Q$i: $question <input type=text size=1 name='choice'><br><br>";
         $i++;
     }
+    echo "<input type=submit value='Submit Answers'>";
+    //echo "<input type='hidden' name='ptsEarned' value=$surVal>";
+    //echo "<input type='hidden' name='form_submitted' value=$surVal/10>";
+    echo "</form>";
 
+    //page redirect should probably be implemented down here
+    if (isset($_GET["form_submitted"]))
+    {  
+        echo "Is this part working?";
+        $answers = $_GET["choice"];
+        //echo "<p><font size='+1'>Thanks! You earned <strong>$surVal</strong> points!</font></p>";
+        $updateCompleted = "INSERT INTO Completes(Completes_ID, User_ID, Survey_ID, answers) VALUES (NEWID(), $username, $surveyID, $answers)";
+        $conn->query($updateCompleted);
+        header("Location: surveyList.php?$surval");
+    }
+
+    
     $conn->close();
 ?>
  

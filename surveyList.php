@@ -17,6 +17,10 @@
   $getUserInfo = "SELECT currency from User WHERE User_ID = $username";
   $purse = $conn->query($getUserInfo);
   
+  if ($_GET["ptsEarned"]) {
+    $earned = $_GET["ptsEarned"];
+    echo "<h2 align='center'><font size='-1'> Congrats! You earned <strong>$earned</strong> points!</font><h2>"; 
+  }
 ?>
 
 <p><h1 align="center"> Poller </h1></p>
@@ -56,6 +60,8 @@
     }
 
     $conn->close();
+
+
     /*if (isset($_GET['selection'])){
         $_GET['selection'];
     }*/
