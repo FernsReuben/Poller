@@ -29,14 +29,6 @@
 <p align="right"><strong><font size="+1"><?= $username, $purse ?></font></strong></p>
 
     <p align="center"><strong><?= $company ?> Survey:</strong> For each statement, enter the degree to which you agree from 0 to 5</p>
-	<!--<form action="surveyList.php" method=get>
-		<br>
-        <br><input type=text size=1 name="choice1"><br>
-        <br><input type=text size=1 name="choice1"><br>
-        <br><input type=text size=1 name="choice1"><br>
-		<input align="center" type="submit" value="submit" onclick= "window.location.href='https://dbdev.cs.kent.edu/~tbaker60/Poller/surveyList.php';">
-		<input type="hidden" name="form_submitted" value="1" >
-	</form>-->
 
 <?php 
     $Qarray = array($surVal/10);
@@ -48,7 +40,7 @@
         echo "Q$i: $question <input type=text size=1 name='choice'><br><br>";
         $i++;
     }
-    echo "<input type=submit value='Submit Answers'>";
+    echo "<button type='button' name='Submit Answers'>";
     //echo "<input type='hidden' name='ptsEarned' value=$surVal>";
     //echo "<input type='hidden' name='form_submitted' value=$surVal/10>";
     echo "</form>";
