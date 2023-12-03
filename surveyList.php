@@ -28,15 +28,18 @@
 
 <?php
 
-   $sql = "SELECT Survey_ID, company_name, value FROM Surveys";
-   $result = $conn->query($sql);
+   $surveyQuery = "SELECT Survey_ID, company_name, value FROM Surveys";
+   $result = $conn->query($surveyQuery);
+
+   $takeOption = "Take Survey";
 
     if ($result->num_rows > 0) {
      // output data of each row
-         while($row = $result->fetch_assoc()) {
-           echo "ID: " . $row["Survey_ID"]. " - Company: " . $row["company_name"]. " - Value: " . $row["value"]."<br>";
-           echo "<button onclick=window.location.href='https://dbdev.cs.kent.edu/~tbaker60/Poller/takeSurvey.php';> Take Survey </button>";
-           echo "<br>";
+        while($row = $result->fetch_assoc()) {
+            echo "ID: " . $row["Survey_ID"]. " - Company: " . $row["company_name"]. " - Value: " . $row["value"]."<br>";
+            if()
+            echo "<button onclick=window.location.href='https://dbdev.cs.kent.edu/~tbaker60/Poller/takeSurvey.php';> $takeOption </button>";
+            echo "<br>";
         }
     } else {
         echo "0 results";

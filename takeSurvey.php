@@ -1,21 +1,25 @@
 <html>
-<head> <title> Hello </title> </head>
+<p><h1 align="center">Poller</h1></p>
 	<body>
-
-	<form action="helloworld.php" method=get>
-		Enter your name: <input type=text size=20 name="name">
-		<input type=submit value="submit">
+    <p align="center">For each question, enter the letter of the statement you most agree with</p>
+	<form action="surveyList.php" method=get>
+		<br><input type=text size=1 name="choice1"><br>
+        <br><input type=text size=1 name="choice1"><br>
+        <br><input type=text size=1 name="choice1"><br>
+        <br><input type=text size=1 name="choice1"><br>
+		<input align="center" type="submit" value="submit" onclick= "window.location.href='https://dbdev.cs.kent.edu/~tbaker60/Poller/surveyList.php';">
 		<input type="hidden" name="form_submitted" value="1" >
 	</form>
 
 <?php 
+
 if (!isset($_GET["form_submitted"]))
 { 
-	echo "Hello World. <p>Please submit the form.";
+	echo "<p>Please complete all questions and submit the form.";
 }
 
 else { 
-	echo "Thanks! <p> Hello, " . $_GET["name"];
+	echo "Thanks!" . $_GET["choice"];
 }
 
 ?>
