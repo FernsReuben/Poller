@@ -32,9 +32,9 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 
 <?php // this line starts PHP Code
 $servername = "localhost";
-$username = "nbufordh";
-$password = "tpI7li7U";
-$dbname = "nbufordh";
+$username = "kguzy";
+$password = "s39SwfTz";
+$dbname = "kguzy";
 
 // Create connection
  $conn = new mysqli($servername, $username, $password, $dbname);

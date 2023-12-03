@@ -17,7 +17,7 @@ $new_street_name = "";
 $new_city = "";
 $new_state = "";
 $new_zip = "";
- 
+
 // Processing form data when form is submitted
 if($_SERVER["REQUEST_METHOD"] == "POST"){
  
