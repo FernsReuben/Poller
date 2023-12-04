@@ -22,7 +22,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 <body>
     <h1 class="my-5">Hi, <b><?php echo htmlspecialchars($_SESSION["username"]); ?></b>. Welcome Poller</h1>
     <p><nav class="nav justify-content-center">
-    <a href="welcome.php" class="nav-item nav-link active">Account info</a>
+    <a href="account-info.php" class="nav-item nav-link active">Account info</a>
     <a href="faculty-table.php" class="nav-item nav-link">Complete surveys</a>
     <a href="faculty-search.php" class="nav-item nav-link">orders/checkout</a>
 </nav>

@@ -12,7 +12,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Faculty View</title>
+    <title>Account Info</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         body{ font: 14px sans-serif; text-align: center; }
@@ -23,7 +23,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 <h1 class="my-5">Hi, <b><?php echo htmlspecialchars($_SESSION["username"]); ?></b>. Welcome to Poller.</h1>
     <p><nav class="nav justify-content-center">
     <a href="welcome.php" class="nav-item nav-link active">Home</a>
-    <a href="welcome.php" class="nav-item nav-link active">Account info</a>
+    <a href="account-info.php" class="nav-item nav-link active">Account info</a>
     <a href="faculty-table.php" class="nav-item nav-link">Complete surveys</a>
     <a href="faculty-search.php" class="nav-item nav-link">orders/checkout</a>
 </nav>
@@ -63,6 +63,10 @@ $dbname = "kguzy";
      $conn->close();
 
 ?> <!-- this is the end of our php code -->
-<p> And now we're back to HTML 
+<p> 
+    <p>
+        <a href="change-address.php" class="btn btn-warning">Change Address</a>
+    </p>
+
 </body>
 </html>
