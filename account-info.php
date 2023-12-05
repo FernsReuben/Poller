@@ -43,16 +43,16 @@ $dbname = "kguzy";
    die("Connection failed: " . $conn->connect_error);
    }
 
-   $sql = "SELECT id, name, address, currency FROM USER";
+   $sql = "SELECT User_ID, first_name, last_name, street_number, street_name, city, zip, email, currency FROM User WHERE User_ID = 123452 ";
    $result = $conn->query($sql);
 
    if ($result->num_rows > 0) {
-     	// Setup the table and headers
-	echo "<Center><table><tr><th>ID</th><th>Name</th><th>Address</th><th>Currency</th></tr>";
-	// output data of each row into a table row
-	 while($row = $result->fetch_assoc()) {
-		 echo "<tr><td>".$row["id"]."</td><td>".$row["name"]."</td><td> ".$row["address"]."</td><td> ".$row["currency"]."</td></tr>";
-	 }
+        // Setup the table and headers
+    echo "<Center><table><tr><th>ID</th><th>First name</th><th>Last name</th><th>Street number</th><th>Street name</th><th>City</th><th>zip</th><th>Email</th><th>Currency</th></tr>";
+    // output data of each row into a table row
+    while($row = $result->fetch_assoc()) {
+        echo "<tr><td>".$row["User_ID"]."</td><td>".$row["first_name"]."</td><td>".$row["last_name"]."</td><td>".$row["street_number"]."</td><td>".$row["street_name"]."</td><td>".$row["city"]."</td><td>".$row["zip"]."</td><td>".$row["email"]."</td><td>".$row["currency"]."</td></tr>";
+}
 
 	echo "</table></center>"; // close the table
 	echo "There are ". $result->num_rows . " results.";
