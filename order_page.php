@@ -46,28 +46,53 @@
 </head>
 <body>
 <?php
-// Function to read CSV file and return data as an associative array
-function readCSV($filename)
-{
-    $rows = file_exists($filename) ? array_map('str_getcsv', file($filename)) : [];
-    if (empty($rows)) {
-        // Handle the case where the file is not found or empty
-        return [];
-    }
+// Database configuration
+$servername = "localhost";
+$username = "kguzy";
+$password = "s39SwfTz";
+$dbname = "kguzy";
 
-    $header = array_shift($rows);
-    $csvData = [];
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
 
-    foreach ($rows as $row) {
-        $csvData[] = array_combine($header, $row);
-    }
-
-    return $csvData;
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
 }
 
-// Read Orders.csv and Prizes.csv
-$orders = readCSV('Orders.csv');
-$prizes = readCSV('Prizes.csv');
+// Function to fetch data from the orders table
+function getOrders($conn) {
+    $sql = "SELECT * FROM orders";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $orders[] = $row;
+        }
+        return $orders;
+    } else {
+        return [];
+    }
+}
+
+// Function to fetch data from the prizes table
+function getPrizes($conn) {
+    $sql = "SELECT * FROM prizes";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $prizes[] = $row;
+        }
+        return $prizes;
+    } else {
+        return [];
+    }
+}
+
+// Read data from the database
+$orders = getOrders($conn);
+$prizes = getPrizes($conn);
 
 // Display order page
 echo '<h1>Order Page</h1>';
@@ -75,7 +100,27 @@ echo '<table border="1">';
 echo '<tr><th>Order ID</th><th>User ID</th><th>Prize</th><th>Quantity</th><th>Total Cost</th><th>Actions</th></tr>';
 
 foreach ($orders as $order) {
-    // ... (Your existing foreach loop)
+    $prizeID = $order['Prize_ID'];
+    $quantity = intval($order['quantity']);
+
+    // Find the prize details based on Prize_ID
+    $prizeDetails = array_filter($prizes, function ($prize) use ($prizeID) {
+        return $prize['Prize_ID'] == $prizeID;
+    });
+
+    // Get the first (and only) element from the filtered array
+    $prizeDetails = reset($prizeDetails);
+
+    // Display order details
+    echo '<tr>';
+    echo '<td>' . $order['Order_ID'] . '</td>';
+    echo '<td>' . $order['User_ID'] . '</td>';
+    echo '<td>' . $prizeDetails['name'] . '</td>';
+    echo '<td>' . $quantity . '</td>';
+
+    // Calculate total cost for the order
+    $totalCost = $quantity * $prizeDetails['cost'];
+    echo '<td>' . $totalCost . '</td>';
 
     // Add buttons for actions
     echo '<td>';
@@ -87,6 +132,9 @@ foreach ($orders as $order) {
 }
 
 echo '</table>';
+
+// Close the database connection
+$conn->close();
 ?>
 
 <!-- JavaScript for handling the popups -->
