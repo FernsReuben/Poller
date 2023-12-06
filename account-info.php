@@ -7,6 +7,11 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
     header("location: login.php");
     exit;
 }
+
+require_once "config.php";
+
+$current_username = '';
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -28,7 +33,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
     <a href="faculty-search.php" class="nav-item nav-link">orders/checkout</a>
 </nav>
 
-<p><h2>User accont information:</h2></p>
+<p><h2>User account information:</h2></p>
 
 <?php // this line starts PHP Code
 $servername = "localhost";
@@ -43,15 +48,30 @@ $dbname = "kguzy";
    die("Connection failed: " . $conn->connect_error);
    }
 
-   $sql = "SELECT User_ID, first_name, last_name, street_number, street_name, city, zip, email, currency FROM User WHERE User_ID = 123452 ";
-   $result = $conn->query($sql);
+
+   $current_username = $_SESSION["username"];
+
+   $sql = "SELECT User_ID, first_name, last_name, street_number, street_name, city, state, zip, email, currency FROM User WHERE username = ? ";
+
+   $stmt = $conn->prepare($sql);
+
+    // Bind the parameter
+    $stmt->bind_param("s", $current_username);
+
+    // Execute the query
+    $stmt->execute();
+
+    // Get the result
+    $result = $stmt->get_result();
+    
+
 
    if ($result->num_rows > 0) {
         // Setup the table and headers
-    echo "<Center><table><tr><th>ID</th><th>First name</th><th>Last name</th><th>Street number</th><th>Street name</th><th>City</th><th>zip</th><th>Email</th><th>Currency</th></tr>";
+    echo "<Center><table><tr><th>ID</th><th>First name</th><th>Last name</th><th>Street number</th><th>Street name</th><th>City</th><th>State</th><th>Zip Code</th><th>Email</th><th>Currency</th></tr>";
     // output data of each row into a table row
     while($row = $result->fetch_assoc()) {
-        echo "<tr><td>".$row["User_ID"]."</td><td>".$row["first_name"]."</td><td>".$row["last_name"]."</td><td>".$row["street_number"]."</td><td>".$row["street_name"]."</td><td>".$row["city"]."</td><td>".$row["zip"]."</td><td>".$row["email"]."</td><td>".$row["currency"]."</td></tr>";
+        echo "<tr><td>".$row["User_ID"]."</td><td>".$row["first_name"]."</td><td>".$row["last_name"]."</td><td>".$row["street_number"]."</td><td>".$row["street_name"]."</td><td>".$row["city"]."</td><td>".$row["state"]."</td><td>".$row["zip"]."</td><td>".$row["email"]."</td><td>".$row["currency"]."</td></tr>";
 }
 
 	echo "</table></center>"; // close the table

@@ -12,55 +12,79 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 require_once "config.php";
  
 // Define variables and initialize with empty values
-$new_street_number = $new_street_name = $new_city = $new_state = $new_zip = "";
+$new_street_number = $new_street_name = $new_city = $new_state = $new_zip = $street_number_err = $street_name_err = $city_err = $state_err = $zip_err = "";
 
 // Processing form data when form is submitted
 if($_SERVER["REQUEST_METHOD"] == "POST"){
  
-    // Validate new zip
-    if(empty(trim($_POST["new_zip"]))){
-        $new_zip = "Please enter valid zip code.";     
-    } elseif(strlen(trim($_POST["new_zip"])) < 5){
-        $new_zip = "Zip code must have atleast 5 numbers.";
+
+
+        // Validate Street number
+        if(empty(trim($_POST["new_street_number"]))){
+        $street_number_err = "Please enter your street number.";
+    } elseif(!preg_match('/^[0-9]+$/', trim($_POST["new_street_number"]))){
+        $street_number_err = "Street number can only contain numbers";
+    } else{
+        $new_street_number = trim($_POST["new_street_number"]);
+    }
+
+        // Validate Street Name
+        if(empty(trim($_POST["new_street_name"]))){
+        $street_name_err = "Please enter your street name.";
+    } elseif(!preg_match('/^[a-zA-Z]+$/', trim($_POST["new_street_name"]))){
+        $street_name_err = "Street name can only contain letters";
+    } else{
+        $new_street_name = trim($_POST["new_street_name"]);
+    }
+
+        // Validate City
+        if(empty(trim($_POST["new_city"]))){
+        $city_err = "Please enter your city.";
+    } elseif(!preg_match('/^[a-zA-Z]+$/', trim($_POST["new_city"]))){
+        $city_err = "City name can only contain letters";
+    } else{
+        $new_city = trim($_POST["new_city"]);
+    }
+
+        // Validate State
+        if(empty(trim($_POST["new_state"]))){
+        $state_err = "Please enter your state.";
+    } elseif(!preg_match('/^[a-zA-Z]+$/', trim($_POST["new_state"]))){
+        $state_err = "Name can only contain letters";
+    } else{
+        $new_state = trim($_POST["new_state"]);
+    }
+
+        // Validate Zip
+        if(empty(trim($_POST["new_zip"]))){
+        $zip_err = "Please enter your zip code.";
+    } elseif(!preg_match('/^[0-9]+$/', trim($_POST["new_zip"]))){
+        $zip_err = "Zip code can only contain numbers";
     } else{
         $new_zip = trim($_POST["new_zip"]);
     }
-    
+
 
 
     // Check input errors before updating the database
     if(empty($street_number_err) && empty($street_name_err) && empty($city_err) && empty($state_err) && empty($zip_err)){
-        // Prepare an update statement
-        $sql = "UPDATE User SET street_number = ? WHERE id = ?";
-        $sql = "UPDATE User SET street_name = ? WHERE id = ?";
-        $sql = "UPDATE User SET city = ? WHERE id = ?";
-        $sql = "UPDATE User SET state = ? WHERE id = ?";
-        $sql = "UPDATE User SET zip = ? WHERE id = ?";
-        
-        if($stmt = $mysqli->prepare($sql)){
-            // Bind variables to the prepared statement as parameters
-            $stmt->bind_param("si", $param_street_number, $param_id);
-            $stmt->bind_param("sj", $param_street_name, $param_id);
-            $stmt->bind_param("sk", $param_city, $param_id);
-            $stmt->bind_param("sl", $param_state, $param_id);
-            $stmt->bind_param("sm", $param_zip, $param_id);
 
+
+        $current_username = $_SESSION["username"];
+        // Prepare an update statement
+
+
+        
+        
+        $stmt = $mysqli->prepare("UPDATE User SET street_number = ?, street_name = ?, city = ?, state = ?, zip = ? WHERE username = ?");
+        
+        $stmt->bind_param("isssis", $new_street_number, $new_street_name, $new_city, $new_state, $new_zip, $current_username);
             
-            // Set parameters
-            $param_password = password_hash($new_password, PASSWORD_DEFAULT);
-            $param_street_number = streetNumber_hash($new_street_number, STREETNUMBER_DEFAULT);
-            $param_street_name = streetName_hash($new_street_name, STREETNAME_DEFAULT);
-            $param_city = city_hash($new_city, CITY_DEFAULT);
-            $param_state = state_hash($new_state, STATE_DEFAULT);
-            $param_zip = zip_hash($new_zip, ZIP_DEFAULT);
-            $param_id = $_SESSION["id"];
-            
+
             // Attempt to execute the prepared statement
             if($stmt->execute()){
-                // Password updated successfully. Destroy the session, and redirect to login page
-                session_destroy();
-                header("location: login.php");
-                exit();
+                
+                header("location: account-info.php");
             } else{
                 echo "Oops! Something went wrong. Please try again later.";
             }
@@ -68,18 +92,20 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             // Close statement
             $stmt->close();
         }
-    }
+    
     
     // Close connection
     $mysqli->close();
-}
+
+    }
+
 ?>
  
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Reset Password</title>
+    <title>Change address</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         body{ font: 14px sans-serif; }
@@ -95,38 +121,38 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
             <div class="form-group">
                 <label>Street Number</label>
-                <input type="street_number" name="new_street_number" class="form-control <?php echo (!empty($new_street_number)) ? 'is-invalid' : ''; ?>" value="<?php echo $new_street_number; ?>">
-                <span class="invalid-feedback"><?php echo $new_street_number; ?></span>
+                <input type="text" name="new_street_number" class="form-control <?php echo (!empty($street_number_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $new_street_number; ?>">
+                <span class="invalid-feedback"><?php echo $street_number_err; ?></span>
             </div>
 
             <div class="form-group">
                 <label>Street Name</label>
-                <input type="street_name" name="new_street_name" class="form-control <?php echo (!empty($new_street_name)) ? 'is-invalid' : ''; ?>" value="<?php echo $new_street_name; ?>">
-                <span class="invalid-feedback"><?php echo $new_street_name; ?></span>
+                <input type="text" name="new_street_name" class="form-control <?php echo (!empty($street_name_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $new_street_name; ?>">
+                <span class="invalid-feedback"><?php echo $street_name_err; ?></span>
             </div>
 
             <div class="form-group">
                 <label>City</label>
-                <input type="city" name="new_city" class="form-control <?php echo (!empty($new_city)) ? 'is-invalid' : ''; ?>" value="<?php echo $new_city; ?>">
-                <span class="invalid-feedback"><?php echo $new_city; ?></span>
+                <input type="text" name="new_city" class="form-control <?php echo (!empty($city_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $new_city; ?>">
+                <span class="invalid-feedback"><?php echo $city_err; ?></span>
             </div>
 
             <div class="form-group">
                 <label>State</label>
-                <input type="state" name="new_state" class="form-control <?php echo (!empty($new_state)) ? 'is-invalid' : ''; ?>" value="<?php echo $new_state; ?>">
-                <span class="invalid-feedback"><?php echo $new_state; ?></span>
+                <input type="text" name="new_state" class="form-control <?php echo (!empty($state_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $new_state; ?>">
+                <span class="invalid-feedback"><?php echo $state_err; ?></span>
             </div>
 
             <div class="form-group">
                 <label>Zip</label>
-                <input type="zip" name="new_zip" class="form-control <?php echo (!empty($new_zip)) ? 'is-invalid' : ''; ?>" value="<?php echo $new_zip; ?>">
-                <span class="invalid-feedback"><?php echo $new_szip; ?></span>
+                <input type="text" name="new_zip" class="form-control <?php echo (!empty($zip_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $new_zip; ?>">
+                <span class="invalid-feedback"><?php echo $zip_err; ?></span>
             </div>
 
             
             <div class="form-group">
                 <input type="submit" class="btn btn-primary" value="Submit">
-                <a class="btn btn-link ml-2" href="welcome.php">Cancel</a>
+                <a class="btn btn-link ml-2" href="account-info.php">Cancel</a>
             </div>
         </form>
     </div>    

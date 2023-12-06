@@ -32,12 +32,11 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         $password = trim($_POST["password"]);
     }
     
-    // Validate credentials
-    if(empty($username_err) && empty($password_err)){
+    if (empty($username_err) && empty($password_err)) {
         // Prepare a select statement
-        $sql = "SELECT id, username, password FROM users WHERE username = ?";
+        $sql = "SELECT username, password FROM User WHERE username = ?";
         
-        if($stmt = $mysqli->prepare($sql)){
+        if ($stmt = $mysqli->prepare($sql)) {
             // Bind variables to the prepared statement as parameters
             $stmt->bind_param("s", $param_username);
             
@@ -45,39 +44,38 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             $param_username = $username;
             
             // Attempt to execute the prepared statement
-            if($stmt->execute()){
+            if ($stmt->execute()) {
                 // Store result
                 $stmt->store_result();
                 
                 // Check if username exists, if yes then verify password
-                if($stmt->num_rows == 1){                    
+                if ($stmt->num_rows == 1) {                    
                     // Bind result variables
-                    $stmt->bind_result($id, $username, $hashed_password);
-                    if($stmt->fetch()){
-                        if(password_verify($password, $hashed_password)){
+                    $stmt->bind_result($username, $actual_password);
+                    if ($stmt->fetch()) {
+                        if ($password === $actual_password) {
                             // Password is correct, so start a new session
                             session_start();
                             
                             // Store data in session variables
                             $_SESSION["loggedin"] = true;
-                            $_SESSION["id"] = $id;
                             $_SESSION["username"] = $username;                            
                             
                             // Redirect user to welcome page
                             header("location: welcome.php");
-                        } else{
+                        } else {
                             // Password is not valid, display a generic error message
                             $login_err = "Invalid username or password.";
                         }
                     }
-                } else{
+                } else {
                     // Username doesn't exist, display a generic error message
                     $login_err = "Invalid username or password.";
                 }
-            } else{
+            } else {
                 echo "Oops! Something went wrong. Please try again later.";
             }
-
+    
             // Close statement
             $stmt->close();
         }
