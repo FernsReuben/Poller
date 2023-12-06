@@ -39,31 +39,34 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         
     // Check input errors before updating the database
     if(empty($new_password_err) && empty($confirm_password_err)){
-        // Prepare an update statement
-        $sql = "UPDATE User SET password = ? WHERE User_ID = ?";
-        
-        if($stmt = $mysqli->prepare($sql)){
-            // Bind variables to the prepared statement as parameters
-            $stmt->bind_param("si", $param_password, $param_id);
-            
-            // Set parameters
-            $param_password = $new_password;
-            $param_id = $_SESSION["User_ID"];
-            
-            // Attempt to execute the prepared statement
-            if($stmt->execute()){
-                // Password updated successfully. Destroy the session, and redirect to login page
-                session_destroy();
-                header("location: login.php");
-                exit();
-            } else{
-                echo "Oops! Something went wrong. Please try again later.";
-            }
 
-            // Close statement
-            $stmt->close();
+
+
+        $current_username = $_SESSION["username"];
+        // Prepare an update statement
+        
+
+        $stmt = $mysqli->prepare("UPDATE User SET password = ? WHERE username = ?");
+            // Bind variables to the prepared statement as parameters
+
+        $stmt->bind_param("ss", $new_password, $current_username);
+            
+
+            
+        // Attempt to execute the prepared statement
+        if($stmt->execute()){
+            // Password updated successfully. Destroy the session, and redirect to login page
+            session_destroy();
+            header("location: login.php");
+
+        } else{
+            echo "Oops! Something went wrong. Please try again later.";
         }
+
+        // Close statement
+        $stmt->close();
     }
+    
     
     // Close connection
     $mysqli->close();
