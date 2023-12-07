@@ -1,160 +1,256 @@
 <?php
 // Initialize the session
 session_start();
- 
-// Check if the user is logged in, otherwise redirect to login page
-if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
+
+// Check if the user is logged in, if not then redirect him to login page
+if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     header("location: login.php");
     exit;
 }
- 
-// Include config file
+
 require_once "config.php";
- 
-// Define variables and initialize with empty values
-$new_street_number = $new_street_name = $new_city = $new_state = $new_zip = $street_number_err = $street_name_err = $city_err = $state_err = $zip_err = "";
 
-// Processing form data when form is submitted
-if($_SERVER["REQUEST_METHOD"] == "POST"){
- 
-
-
-        // Validate Street number
-        if(empty(trim($_POST["new_street_number"]))){
-        $street_number_err = "Please enter your street number.";
-    } elseif(!preg_match('/^[0-9]+$/', trim($_POST["new_street_number"]))){
-        $street_number_err = "Street number can only contain numbers";
-    } else{
-        $new_street_number = trim($_POST["new_street_number"]);
-    }
-
-        // Validate Street Name
-        if(empty(trim($_POST["new_street_name"]))){
-        $street_name_err = "Please enter your street name.";
-    } elseif(!preg_match('/^[a-zA-Z]+$/', trim($_POST["new_street_name"]))){
-        $street_name_err = "Street name can only contain letters";
-    } else{
-        $new_street_name = trim($_POST["new_street_name"]);
-    }
-
-        // Validate City
-        if(empty(trim($_POST["new_city"]))){
-        $city_err = "Please enter your city.";
-    } elseif(!preg_match('/^[a-zA-Z]+$/', trim($_POST["new_city"]))){
-        $city_err = "City name can only contain letters";
-    } else{
-        $new_city = trim($_POST["new_city"]);
-    }
-
-        // Validate State
-        if(empty(trim($_POST["new_state"]))){
-        $state_err = "Please enter your state.";
-    } elseif(!preg_match('/^[a-zA-Z]+$/', trim($_POST["new_state"]))){
-        $state_err = "Name can only contain letters";
-    } else{
-        $new_state = trim($_POST["new_state"]);
-    }
-
-        // Validate Zip
-        if(empty(trim($_POST["new_zip"]))){
-        $zip_err = "Please enter your zip code.";
-    } elseif(!preg_match('/^[0-9]+$/', trim($_POST["new_zip"]))){
-        $zip_err = "Zip code can only contain numbers";
-    } else{
-        $new_zip = trim($_POST["new_zip"]);
-    }
-
-
-
-    // Check input errors before updating the database
-    if(empty($street_number_err) && empty($street_name_err) && empty($city_err) && empty($state_err) && empty($zip_err)){
-
-
-        $current_username = $_SESSION["username"];
-        // Prepare an update statement
-
-
-        
-        
-        $stmt = $mysqli->prepare("UPDATE User SET street_number = ?, street_name = ?, city = ?, state = ?, zip = ? WHERE username = ?");
-        
-        $stmt->bind_param("isssis", $new_street_number, $new_street_name, $new_city, $new_state, $new_zip, $current_username);
-            
-
-            // Attempt to execute the prepared statement
-            if($stmt->execute()){
-                
-                header("location: account-info.php");
-            } else{
-                echo "Oops! Something went wrong. Please try again later.";
-            }
-
-            // Close statement
-            $stmt->close();
-        }
-    
-    
-    // Close connection
-    $mysqli->close();
-
-    }
+$current_username = '';
 
 ?>
- 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Change address</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Page</title>
+
+    <!-- Add a simple CSS style for the popups -->
     <style>
-        body{ font: 14px sans-serif; }
-        .wrapper{ width: 360px; padding: 20px; }
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            z-index: 1000;
+            max-width: 300px;
+            text-align: center;
+        }
+
+        .popup p {
+            margin: 0;
+        }
+
+        /* Style for buttons */
+        button {
+            padding: 10px;
+            margin: 5px;
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
     </style>
 </head>
 <body>
-    <div class="wrapper">
-        <h2>Change Address</h2>
-        <p>Please fill out this form to change your address.</p>
-        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post"> 
-            <div class="form-group">
+<?php
+// Database configuration
+$servername = "localhost";
+$username = "kguzy";
+$password = "s39SwfTz";
+$dbname = "kguzy";
 
-            <div class="form-group">
-                <label>Street Number</label>
-                <input type="text" name="new_street_number" class="form-control <?php echo (!empty($street_number_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $new_street_number; ?>">
-                <span class="invalid-feedback"><?php echo $street_number_err; ?></span>
-            </div>
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
 
-            <div class="form-group">
-                <label>Street Name</label>
-                <input type="text" name="new_street_name" class="form-control <?php echo (!empty($street_name_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $new_street_name; ?>">
-                <span class="invalid-feedback"><?php echo $street_name_err; ?></span>
-            </div>
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
 
-            <div class="form-group">
-                <label>City</label>
-                <input type="text" name="new_city" class="form-control <?php echo (!empty($city_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $new_city; ?>">
-                <span class="invalid-feedback"><?php echo $city_err; ?></span>
-            </div>
+// Function to fetch data from the prizes table
+function getPrizes($conn)
+{
+    $sql = "SELECT * FROM Prizes";
+    $result = $conn->query($sql);
 
-            <div class="form-group">
-                <label>State</label>
-                <input type="text" name="new_state" class="form-control <?php echo (!empty($state_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $new_state; ?>">
-                <span class="invalid-feedback"><?php echo $state_err; ?></span>
-            </div>
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            // Select specific attributes from the row
+            $prizes[] = [
+                'Prize_ID' => $row['Prize_ID'],
+                'name' => $row['name'],
+                'cost' => $row['cost'],
+            ];
+        }
+        return $prizes;
+    } else {
+        echo "Error executing query: " . $conn->error;
+        return [];
+    }
+}
 
-            <div class="form-group">
-                <label>Zip</label>
-                <input type="text" name="new_zip" class="form-control <?php echo (!empty($zip_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $new_zip; ?>">
-                <span class="invalid-feedback"><?php echo $zip_err; ?></span>
-            </div>
+// Function to get the user's current credits
+function getUserCredits($conn, $username)
+{
+    $credits = 0;
+    $stmt = $conn->prepare("SELECT credits FROM User WHERE username = ?");
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-            
-            <div class="form-group">
-                <input type="submit" class="btn btn-primary" value="Submit">
-                <a class="btn btn-link ml-2" href="account-info.php">Cancel</a>
-            </div>
-        </form>
-    </div>    
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $credits = $row['credits'];
+    }
+
+    $stmt->close();
+    return $credits;
+}
+
+// Read data from the database (using only the prizes table)
+$prizes = getPrizes($conn);
+
+// Display navigation buttons
+echo '<nav class="nav justify-content-center">';
+echo '<a href="welcome.php" class="nav-item nav-link active">Home</a>';
+echo '<a href="account-info.php" class="nav-item nav-link active">Account info</a>';
+echo '<a href="faculty-table.php" class="nav-item nav-link">Complete surveys</a>';
+echo '<a href="faculty-search.php" class="nav-item nav-link">orders/checkout</a>';
+echo '</nav>';
+
+// Display order page
+echo '<h1>Order Page</h1>';
+
+// Header buttons
+echo '<div>';
+echo '<button onclick="placeOrder()">Place Order</button>';
+echo '<button onclick="showPopup(\'Cancel Order\')">Cancel Order</button>';
+echo '</div>';
+
+// Process order form submission
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["prizes"])) {
+    // Get the user ID
+    $current_username = $_SESSION["username"];
+    $user_id_query = "SELECT User_ID FROM User WHERE username = ?";
+    $user_id_stmt = $conn->prepare($user_id_query);
+    $user_id_stmt->bind_param("s", $current_username);
+    $user_id_stmt->execute();
+    $user_id_result = $user_id_stmt->get_result();
+    $user_id_row = $user_id_result->fetch_assoc();
+    $user_id = $user_id_row["User_ID"];
+
+    // Get the user's current credits
+    $current_credits = getUserCredits($conn, $current_username);
+
+    // Calculate the total cost of selected prizes
+    $total_cost = 0;
+    foreach ($_POST["prizes"] as $prize_id) {
+        foreach ($prizes as $prize) {
+            if ($prize["Prize_ID"] == $prize_id) {
+                $total_cost += $prize["cost"];
+                break;
+            }
+        }
+    }
+    $current_username = $_SESSION["username"];
+
+    // Check if the user has sufficient credits
+    if ($current_credits >= $total_cost) {
+        // Subtract the cost from the user's credits
+        $new_credits = $current_credits - $total_cost;
+        $update_credits_query = "UPDATE User SET currency = ? WHERE User_ID = ?";
+        $update_credits_stmt = $conn->prepare($update_credits_query);
+        $update_credits_stmt->bind_param("ii", $new_credits, $user_id);
+        $update_credits_stmt->execute();
+
+        // Insert orders into the Orders database
+        $insert_order_query = "INSERT INTO Orders (User_ID, Prize_ID) VALUES (?, ?)";
+        $insert_order_stmt = $conn->prepare($insert_order_query);
+
+        foreach ($_POST["prizes"] as $prize_id) {
+            $insert_order_stmt->bind_param("ii", $user_id, $prize_id);
+            $insert_order_stmt->execute();
+        }
+
+        // Close the prepared statements
+        $update_credits_stmt->close();
+        $insert_order_stmt->close();
+    } else {
+        // User doesn't have sufficient credits, display an error message or handle it accordingly
+        echo '<script>alert("Insufficient credits to place the order.");</script>';
+    }
+
+    // Close the user ID statement
+    $user_id_stmt->close();
+}
+
+echo '<form action="order_page.php" method="post">'; // Assuming you will process the order on the same page
+
+echo '<table>';
+echo '<tr><th>Name</th><th>Cost</th><th>Select</th></tr>';
+
+foreach ($prizes as $prize) {
+    // Display prize details with checkboxes
+    echo '<tr>';
+    echo '<td>' . $prize['name'] . '</td>';
+    echo '<td>' . $prize['cost'] . '</td>';
+    echo '<td><input type="checkbox" name="prizes[]" value="' . $prize['Prize_ID'] . '"></td>';
+    echo '</tr>';
+}
+
+echo '</table>';
+
+echo '<input type="submit" value="Submit Order">';
+
+echo '</form>';
+
+// Close the database connection
+$conn->close();
+?>
+
+<!-- JavaScript for handling the popups -->
+<script>
+    function showPopup(message) {
+        // Create a popup element
+        var popup = document.createElement('div');
+        popup.className = 'popup';
+        popup.innerHTML = '<p>' + message + '</p>';
+
+        // Append the popup to the body
+        document.body.appendChild(popup);
+
+        // Close the popup after 2 seconds (adjust as needed)
+        setTimeout(function () {
+            document.body.removeChild(popup);
+        }, 2000);
+    }
+
+    function placeOrder() {
+        // Submit the form to process the order
+        document.querySelector("form").submit();
+    }
+</script>
 </body>
 </html>
