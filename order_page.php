@@ -106,6 +106,7 @@ function getPrizes($conn)
         }
         return $prizes;
     } else {
+        echo "Error executing query: " . $conn->error;
         return [];
     }
 }
@@ -130,26 +131,19 @@ echo '<button onclick="showPopup(\'Place Order\')">Place Order</button>';
 echo '<button onclick="showPopup(\'Cancel Order\')">Cancel Order</button>';
 echo '</div>';
 
-echo '<form action="process_order.php" method="post">'; // Assuming you will process the order in process_order.php
-
 echo '<table>';
-echo '<tr><th>Prize ID</th><th>Name</th><th>Cost</th><th>Order Quantity</th></tr>';
+echo '<tr><th>Prize ID</th><th>Name</th><th>Cost</th></tr>';
 
 foreach ($prizes as $prize) {
-    // Display prize details with checkboxes
+    // Display prize details
     echo '<tr>';
     echo '<td>' . $prize['Prize_ID'] . '</td>';
     echo '<td>' . $prize['name'] . '</td>';
     echo '<td>' . $prize['cost'] . '</td>';
-    echo '<td><input type="checkbox" name="prizes[]" value="' . $prize['Prize_ID'] . '"> Quantity <input type="number" name="quantity[' . $prize['Prize_ID'] . ']" min="1" value="1"></td>';
     echo '</tr>';
 }
 
 echo '</table>';
-
-echo '<input type="submit" value="Submit Order">';
-
-echo '</form>';
 
 // Close the database connection
 $conn->close();
