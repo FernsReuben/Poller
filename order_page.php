@@ -184,8 +184,10 @@ $current_username = $_SESSION["username"];
         function placeOrder() {
             // Submit the form to process the order
             document.querySelector("form").submit(); 
+            
+
             /*var popup=document.getElementByID("placedPopup");
-            popup.classlist.toggle("show");
+            popup.classlist.toggle("show");*/
         }
         function cancelOrder() {
             document.querySelector("form").reset();
@@ -193,6 +195,24 @@ $current_username = $_SESSION["username"];
             var popup=document.getElementByID("cancelledPopup");
             popup.classlist.toggle("show");
         }
+
+            var modal = document.getElementByID("placedModal");
+            var btn = document.getElementByID("placeBtn");
+            var span = document.getElementsByClassName("close")[0];
+
+            btn.onclick = function() {
+                modal.style.display = "block";
+            }
+
+            span.onclick = function() {
+                modal.style.display = "none";
+            }
+
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+            }
     </script>
 </head>
 <body>
@@ -349,14 +369,16 @@ foreach ($prizes as $prize) {
 echo '</table>';
 
 echo '<div>';
-echo '<button class="modal" type="submit" action="placeOrder()">Place Order</button>';
+echo '<button id="placeBtn" type="submit" action="placeOrder()">Place Order</button>';
+echo "<div id='placedModal' class='modal'>";
 echo '<div class="modal-content">
     <span class="close">&times;</span>
     <p>Order placed.</p>
     </div>';
+echo '</div>';
 //echo '<button onclick="showPopup(\'Cancel Order\')">Cancel Order</button>';
 echo "<button onclick='cancelOrder()'>Cancel Order</button>";
-echo '</div>';
+//echo '</div>';
 //echo '<input type="submit" value="Submit Order">';
 
 echo '</form>';
@@ -365,13 +387,14 @@ echo '</form>';
 $conn->close();
 ?>
 
-<div class="popup" onclick='closePopup("placedPopup");'>Click to close
+<!-- Popups
+    <div class="popup" onclick='closePopup("placedPopup");'>Click to close
   <span class="popuptext" id="placedPopup">Order successfully placed!</span>
 </div>
 
 <div class="popup" onclick='closePopup("cancelledPopup");'>Click to close
   <span class="popuptext" id="cancelledPopup">Order cancelled</span>
-</div>
+</div>-->
 
 </body>
 </html>
