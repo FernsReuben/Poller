@@ -60,10 +60,8 @@ $current_username = $_SESSION["username"];
         }
 
         /* Toggle this class when clicking on the popup container (hide and show the popup) */
-        .poup .show {
+        .popup .show {
         visibility: visible;
-        -webkit-animation: fadeIn 1s;
-        animation: fadeIn 1s
         }
 
         /* Add animation (fade in the popup) */
@@ -75,37 +73,6 @@ $current_username = $_SESSION["username"];
         @keyframes fadeIn {
         from {opacity: 0;}
         to {opacity:1 ;}
-        }
-</style>
-</head>
-<body>
-
-    <p><nav class="nav justify-content-center">
-    <a href="welcome.php" class="nav-item nav-link active">Home</a>
-    <a href="account-info.php" class="nav-item nav-link active">Account info</a>
-    <a href="surveyList.php" class="nav-item nav-link">Complete surveys</a>
-    <a href="order_page.php" class="nav-item nav-link">orders/checkout</a>
-</nav>
-    <!-- Add a simple CSS style for the popups -->
-    <style>
-        .popup {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            padding: 20px;
-            background-color: #fff;
-            border: 1px solid #ddd;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-            border-radius: 8px;
-            z-index: 1000;
-            max-width: 300px;
-            text-align: center;
-        }
-
-        .popup p {
-            margin: 0;
         }
 
         /* Style for buttons */
@@ -137,7 +104,76 @@ $current_username = $_SESSION["username"];
             padding: 10px;
             text-align: left;
         }
-    </style>
+
+                /* The Modal (background) */
+        .modal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        padding-top: 100px; /* Location of the box */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        }
+
+        /* Modal Content */
+        .modal-content {
+        background-color: #fefefe;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        }
+
+        /* The Close Button */
+        .close {
+        color: #aaaaaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+        color: #000;
+        text-decoration: none;
+        cursor: pointer;
+        }
+</style>
+    <p><nav class="nav justify-content-center">
+    <a href="welcome.php" class="nav-item nav-link active">Home</a>
+    <a href="account-info.php" class="nav-item nav-link active">Account info</a>
+    <a href="surveyList.php" class="nav-item nav-link">Complete surveys</a>
+    <a href="order_page.php" class="nav-item nav-link">orders/checkout</a>
+    </nav></p>
+    <!-- Add a simple CSS style for the popups
+    <style>
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            z-index: 1000;
+            max-width: 300px;
+            text-align: center;
+        }
+
+        .popup p {
+            margin: 0;
+        }
+
+        
+    </style>-->
     <!-- JavaScript for handling the popups -->
     <script>
         function closePopup(type) {
@@ -148,7 +184,7 @@ $current_username = $_SESSION["username"];
         function placeOrder() {
             // Submit the form to process the order
             document.querySelector("form").submit(); 
-            var popup=document.getElementByID("placedPopup");
+            /*var popup=document.getElementByID("placedPopup");
             popup.classlist.toggle("show");
         }
         function cancelOrder() {
@@ -313,7 +349,11 @@ foreach ($prizes as $prize) {
 echo '</table>';
 
 echo '<div>';
-echo '<button type="submit" action="placeOrder()">Place Order</button>';
+echo '<button class="modal" type="submit" action="placeOrder()">Place Order</button>';
+echo '<div class="modal-content">
+    <span class="close">&times;</span>
+    <p>Order placed.</p>
+    </div>';
 //echo '<button onclick="showPopup(\'Cancel Order\')">Cancel Order</button>';
 echo "<button onclick='cancelOrder()'>Cancel Order</button>";
 echo '</div>';
@@ -325,11 +365,11 @@ echo '</form>';
 $conn->close();
 ?>
 
-<div class="popup" onclick='closePopup("placedPopup")'>Click to close
+<div class="popup" onclick='closePopup("placedPopup");'>Click to close
   <span class="popuptext" id="placedPopup">Order successfully placed!</span>
 </div>
 
-<div class="popup" onclick='closePopup("cancelledPopup")'>Click to close
+<div class="popup" onclick='closePopup("cancelledPopup");'>Click to close
   <span class="popuptext" id="cancelledPopup">Order cancelled</span>
 </div>
 
