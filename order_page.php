@@ -1,7 +1,7 @@
 <?php
 // Initialize the session
 session_start();
- 
+
 // Check if the user is logged in, if not then redirect him to login page
 if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
     header("location: login.php");
@@ -75,21 +75,6 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Function to fetch data from the orders table
-function getOrders($conn) {
-    $sql = "SELECT * FROM orders";
-    $result = $conn->query($sql);
-
-    if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            $orders[] = $row;
-        }
-        return $orders;
-    } else {
-        return [];
-    }
-}
-
 // Function to fetch data from the prizes table
 function getPrizes($conn) {
     $sql = "SELECT * FROM prizes";
@@ -110,37 +95,20 @@ function getPrizes($conn) {
     }
 }
 
-// Read data from the database
-$orders = getOrders($conn);
+// Read data from the database (using only the prizes table)
 $prizes = getPrizes($conn);
 
 // Display order page
 echo '<h1>Order Page</h1>';
 echo '<table border="1">';
-echo '<tr><th>Order ID</th><th>User ID</th><th>Prize</th><th>Quantity</th><th>Total Cost</th><th>Actions</th></tr>';
+echo '<tr><th>Prize ID</th><th>Name</th><th>Cost</th><th>Actions</th></tr>';
 
-foreach ($orders as $order) {
-    $prizeID = $order['Prize_ID'];
-    $quantity = intval($order['quantity']);
-
-    // Find the prize details based on Prize_ID
-    $prizeDetails = array_filter($prizes, function ($prize) use ($prizeID) {
-        return $prize['Prize_ID'] == $prizeID;
-    });
-
-    // Get the first (and only) element from the filtered array
-    $prizeDetails = reset($prizeDetails);
-
-    // Display order details
+foreach ($prizes as $prize) {
+    // Display prize details
     echo '<tr>';
-    echo '<td>' . $order['Order_ID'] . '</td>';
-    echo '<td>' . $order['User_ID'] . '</td>';
-    echo '<td>' . $prizeDetails['name'] . '</td>';
-    echo '<td>' . $quantity . '</td>';
-
-    // Calculate total cost for the order
-    $totalCost = $quantity * $prizeDetails['cost'];
-    echo '<td>' . $totalCost . '</td>';
+    echo '<td>' . $prize['Prize_ID'] . '</td>';
+    echo '<td>' . $prize['name'] . '</td>';
+    echo '<td>' . $prize['cost'] . '</td>';
 
     // Add buttons for actions
     echo '<td>';
@@ -163,7 +131,7 @@ $conn->close();
         // Create a popup element
         var popup = document.createElement('div');
         popup.className = 'popup';
-        popup.innerHTML = '<p>' + message + '</p>';
+        popup.innerHTML = '<p>' . message . '</p>';
 
         // Append the popup to the body
         document.body.appendChild(popup);
