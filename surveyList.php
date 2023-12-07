@@ -1,18 +1,18 @@
 <html>
 <body>
 <?php
-// Initialize the session
-session_start();
- 
-// Check if the user is already logged in, if yes then redirect them to welcome page
-if(!isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] !== true){
-    header("location: welcome.php");
-    exit;
-}
- 
-// Include config file
-require_once "config.php";
- 
+    // Initialize the session
+    session_start();
+    
+    // Check if the user is already logged in, if yes then redirect them to welcome page
+    if(!isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] !== true){
+        header("location: login.php");
+        exit;
+    }
+    
+    // Include config file
+    require_once "config.php";
+    
 
   // Create connection
   $conn = new mysqli(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
@@ -21,13 +21,15 @@ require_once "config.php";
     die("Connection failed: " . $conn->connect_error);
   }
 
-  $userID = 123452;
+
   // This part will need updated based on our login implementation
   $current_username = $_SESSION["username"];
-  $getUserInfo = "SELECT currency from User WHERE username = $current_username";
-  $purse = $conn->query($getUserInfo);
-  $purse = $purse->fetch_assoc();
-  $purse = $purse["currency"];
+  $getUserInfo = "SELECT currency, User_ID FROM User WHERE username = '$current_username'";
+  $info = $conn->query($getUserInfo);
+    //echo("Error description: " . $conn->error);
+  $info = $info->fetch_assoc();
+  $purse = $info["currency"];
+  $userID = $info["User_ID"];
 
   if ($_isset["ptsEarned"]) {
     $earned = $_GET["ptsEarned"];
@@ -37,12 +39,15 @@ require_once "config.php";
 
 <p><h1 align="center"> Poller </h1></p>
 
-<p align="right"><font size="+1"><strong><?= $userID?></strong>   $<?= $purse ?></font></p>
+<p align="right"><font size="+1"><strong><?= $current_username?></strong>   $<?= $purse ?></font></p>
 
 
 
-<p><br><u>List of Available Surveys:</u></p>
-
+<p align="center"><br><u>List of Available Surveys</u></p>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+	<style>
+			body{ font: 14px sans-serif; text-align: center; }
+	</style>
 <?php
     $currentSurvey = 1738;
     $taking = 0;
@@ -61,13 +66,11 @@ require_once "config.php";
             //echo $checkCompleted;
             $checkCompleted = $checkCompleted["survey_taken"];
             
-            if($checkCompleted == $currentSurvey) { //Survey has been taken already
-                //echo "<button onclick='<p>That survey cannot be taken again</p>'> Survey Taken </button><br>";
-            } else {                                             //Survey has not yet been taken
-                echo "<input type='radio' name='selection' value=$currentSurvey>";
-                    //
-                    //onclick=window.location.href='https://dbdev.cs.kent.edu/~tbaker60/Poller/takeSurvey.php?currentSurvey';
-                    echo "ID: " . $row["Survey_ID"]. " - Company: " . $row["company_name"]. " - Value: " . $row["value"]."<br>";
+            if($checkCompleted != $currentSurvey) { //Survey has not been taken already
+                echo "<p align='center'><input type='radio' name='selection' value=$currentSurvey>";
+                //
+                //onclick=window.location.href='https://dbdev.cs.kent.edu/~tbaker60/Poller/takeSurvey.php?currentSurvey';
+                echo " ID: " . $row["Survey_ID"]. " - Company: " . $row["company_name"]. " - Value: " . $row["value"]."</p>";
             }
             
         }

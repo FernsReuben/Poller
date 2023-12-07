@@ -1,7 +1,7 @@
 <html>
 <h1 align="center">Poller</h1>
 <body>
-	<p> Congrats! You earned <?= $_GET['ptsEarned']?> pts! </p>
+	<p align='center'> Congrats! You earned <?= $_GET['ptsEarned']?> pts! </p>
 <?php 
 // Initialize the session
 session_start();
@@ -23,12 +23,15 @@ require_once "config.php";
     }
 
 	$current_username = $_SESSION["username"];
-	$getUserID = "SELECT User_ID FROM User WHERE username = $current_username";
+	$getUserID = "SELECT User_ID FROM User WHERE username = '$current_username'";
 	$userID = $conn->query($getUserID);
+	$userID = $userID->fetch_assoc();
+	$userID = $userID["User_ID"];
+
 	$surVal = $_GET['ptsEarned'];
 	$answers = "";
-	$j = 1;
-	echo $_GET["choice$j"];
+	//$j = 1;
+	//echo $_GET["choice$j"];
 	
 	for ($i=1; $i <= ($surVal/10); $i++) {
 		$choice = $_GET["choice$i"];
@@ -36,7 +39,7 @@ require_once "config.php";
 		$answers .= "choice$i=" . $choice;
 		if ($i != $surVal/10) $answers .= "&";
 	}
-	echo $answers;
+	//echo $answers;
 
 	$surveyID = $_GET["surveyTaken"];
 	//echo "<p><font size='+1'>Thanks! You earned <strong>$surVal</strong> points!</font></p>";
@@ -46,16 +49,36 @@ require_once "config.php";
 	$completesStmt->bind_param('iiss', $completesID, $userID, $surveyID, $answers);
 	//echo "Params bound";
 	if (!$completesStmt->execute()){
-		echo("Error description: " . $conn->error);
+		echo("Error description 1: " . $conn->error);
 	}
-	echo "<br><br>Hey completes insert worked!";
+	//echo "<br><br>Hey completes insert worked!";
+	
+	// Setting new currency value
+	$getUserInfo = "SELECT currency from User WHERE username = '$current_username'";
+    $purse = $conn->query($getUserInfo);
+    $purse = $purse->fetch_assoc();
+    $purse = $purse["currency"];
+	$purse = $purse + $surVal;
+	echo "<p align='center'> You now have $$purse at your disposal!!! <p>";
 
-	//$currencyStmt = ;
-	if (!$conn->query("UPDATE Users SET currency = (currency+$surVal) WHERE User_ID = $userID")){
-		echo("Error description: " . $conn->error);
+	$currencyUpdate = "UPDATE User SET currency = $purse WHERE User_ID = $userID";
+	
+	if (!$conn->query($currencyUpdate)){
+		echo("Error description 2: " . $conn->error);
 	}
 	$conn->close();
 ?>
- 
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+	<style>
+			body{ font: 14px sans-serif; text-align: center; }
+	</style>
+	<a href="welcome.php" class="btn btn-warning">Go to Home</a>
+	<a href="surveyList.php" class="btn btn-warning">Return to Surveys</a>
+	<a href="order_page.php" class="btn btn-warning">Order Some Prizes</a>
 </body>
 </html>
+
+<!--
+		<button class="button button1" align="center" href="surveyList.php">  </button>
+		<button class="button button1" align="center" href="order_page.php">  </button>
+-->

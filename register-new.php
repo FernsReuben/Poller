@@ -175,6 +175,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             
             header("location: login.php");
         } else {
+
+            echo("Error description: " . $conn->error);
             echo "Oops! Something went wrong10. Please try again later.";
         }
 

@@ -29,8 +29,8 @@ $current_username = '';
     <p><nav class="nav justify-content-center">
     <a href="welcome.php" class="nav-item nav-link active">Home</a>
     <a href="account-info.php" class="nav-item nav-link active">Account info</a>
-    <a href="faculty-table.php" class="nav-item nav-link">Complete surveys</a>
-    <a href="faculty-search.php" class="nav-item nav-link">orders/checkout</a>
+    <a href="surveyList.php" class="nav-item nav-link">Complete surveys</a>
+    <a href="order_page.php" class="nav-item nav-link">orders/checkout</a>
 </nav>
 
 <p><h2>User account information:</h2></p>
