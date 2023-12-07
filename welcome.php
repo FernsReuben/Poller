@@ -20,7 +20,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
     </style>
 </head>
 <body>
-    <h1 class="my-5">Hi, <b><?php echo htmlspecialchars($_SESSION["username"]); ?></b>. Welcome Poller</h1>
+    <h1 class="my-5">Hi, <b><?php echo htmlspecialchars($_SESSION["username"]); ?></b>. Welcome to Poller</h1>
     <p><nav class="nav justify-content-center">
     <a href="account-info.php" class="nav-item nav-link active">Account info</a>
     <a href="surveyList.php" class="nav-item nav-link">Complete surveys</a>

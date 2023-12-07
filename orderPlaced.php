@@ -75,9 +75,9 @@ $purse = $purse["currency"];
 
 <p align="center"> Order placed successfully! <p>
 <div>
-    <button action="order_page.php"> Return to orders page </button>
-    <button action="takeSurvey.php"> Take a Survey </button>
-    <button action="welcome.php"> Go to Home </button>
+    <a href="order_page.php" class="btn btn-warning"> Return to orders page </a>
+    <a href="surveyList.php" class="btn btn-warning"> Take a Survey </a>
+    <a href="welcome.php" class="btn btn-warning"> Go to Home </a>
 </div>
 </body>
 </html>
