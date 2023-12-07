@@ -1,4 +1,3 @@
-
 <?php
 // Initialize the session
 session_start();
@@ -9,6 +8,8 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     exit;
 }
 
+
+
 require_once "config.php";
 
 $current_username = '';
@@ -17,10 +18,21 @@ $current_username = '';
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
     <title>Order Page</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body{ font: sans-serif; text-align: center;}
+    </style>
+</head>
+<body>
 
+    <p><nav class="nav justify-content-center">
+    <a href="welcome.php" class="nav-item nav-link active">Home</a>
+    <a href="account-info.php" class="nav-item nav-link active">Account info</a>
+    <a href="surveyList.php" class="nav-item nav-link">Complete surveys</a>
+    <a href="order_page.php" class="nav-item nav-link">orders/checkout</a>
+</nav>
     <!-- Add a simple CSS style for the popups -->
     <style>
         .popup {
@@ -116,14 +128,14 @@ function getPrizes($conn)
 function getUserCredits($conn, $username)
 {
     $credits = 0;
-    $stmt = $conn->prepare("SELECT credits FROM User WHERE username = ?");
+    $stmt = $conn->prepare("SELECT currency FROM Users WHERE username = ?");
     $stmt->bind_param("s", $username);
     $stmt->execute();
     $result = $stmt->get_result();
 
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
-        $credits = $row['credits'];
+        $credits = $row['currency'];
     }
 
     $stmt->close();
@@ -133,13 +145,6 @@ function getUserCredits($conn, $username)
 // Read data from the database (using only the prizes table)
 $prizes = getPrizes($conn);
 
-// Display navigation buttons
-echo '<nav class="nav justify-content-center">';
-echo '<a href="welcome.php" class="nav-item nav-link active">Home</a>';
-echo '<a href="account-info.php" class="nav-item nav-link active">Account info</a>';
-echo '<a href="faculty-table.php" class="nav-item nav-link">Complete surveys</a>';
-echo '<a href="faculty-search.php" class="nav-item nav-link">orders/checkout</a>';
-echo '</nav>';
 
 // Display order page
 echo '<h1>Order Page</h1>';
@@ -154,7 +159,7 @@ echo '</div>';
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["prizes"])) {
     // Get the user ID
     $current_username = $_SESSION["username"];
-    $user_id_query = "SELECT User_ID FROM User WHERE username = ?";
+    $user_id_query = "SELECT User_ID FROM Users WHERE username = ?";
     $user_id_stmt = $conn->prepare($user_id_query);
     $user_id_stmt->bind_param("s", $current_username);
     $user_id_stmt->execute();
@@ -175,13 +180,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["prizes"])) {
             }
         }
     }
-    $current_username = $_SESSION["username"];
 
     // Check if the user has sufficient credits
     if ($current_credits >= $total_cost) {
         // Subtract the cost from the user's credits
         $new_credits = $current_credits - $total_cost;
-        $update_credits_query = "UPDATE User SET currency = ? WHERE User_ID = ?";
+        $update_credits_query = "UPDATE Users SET currency = ? WHERE User_ID = ?";
         $update_credits_stmt = $conn->prepare($update_credits_query);
         $update_credits_stmt->bind_param("ii", $new_credits, $user_id);
         $update_credits_stmt->execute();
@@ -254,4 +258,8 @@ $conn->close();
     }
 </script>
 </body>
+<<<<<<< HEAD
 </html>
+=======
+</html>
+>>>>>>> Nick-workspace

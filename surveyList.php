@@ -9,6 +9,15 @@
     </style>
 </head>
 <body>
+
+
+    <p><nav class="nav justify-content-center">
+    <a href="welcome.php" class="nav-item nav-link active">Home</a>
+    <a href="account-info.php" class="nav-item nav-link active">Account info</a>
+    <a href="surveyList.php" class="nav-item nav-link">Complete surveys</a>
+    <a href="order_page.php" class="nav-item nav-link">orders/checkout</a>
+</nav>
+
 <?php
     // Initialize the session
     session_start();
@@ -48,6 +57,14 @@
 
 
 <p align="center"><br><u>List of Available Surveys</u></p>
+<<<<<<< HEAD
+=======
+
+<?php
+    $currentSurvey = 1738;
+    $taking = 0;
+    //$takeSurveyButton = "<button onclick=window.location.href='https://dbdev.cs.kent.edu/~tbaker60/Poller/takeSurvey.php';> Take Survey </button><br>";
+>>>>>>> Nick-workspace
 
 <?php
     $currentSurvey = 1738; //setting random value in case of errors
