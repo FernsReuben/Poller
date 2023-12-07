@@ -1,5 +1,23 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Survey List</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body{ font: sans-serif; text-align: center;}
+    </style>
+</head>
 <body>
+
+
+    <p><nav class="nav justify-content-center">
+    <a href="welcome.php" class="nav-item nav-link active">Home</a>
+    <a href="account-info.php" class="nav-item nav-link active">Account info</a>
+    <a href="surveyList.php" class="nav-item nav-link">Complete surveys</a>
+    <a href="order_page.php" class="nav-item nav-link">orders/checkout</a>
+</nav>
+
 <?php
     // Initialize the session
     session_start();
@@ -44,10 +62,7 @@
 
 
 <p align="center"><br><u>List of Available Surveys</u></p>
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-	<style>
-			body{ font: 14px sans-serif; text-align: center; }
-	</style>
+
 <?php
     $currentSurvey = 1738;
     $taking = 0;
@@ -74,7 +89,7 @@
             }
             
         }
-            echo "<input type=submit value='Begin Selected Survey'>";
+            echo "<input type=submit class='btn btn-primary' value='Begin Selected Survey'>";
     } else {
         echo "0 results";
     }
