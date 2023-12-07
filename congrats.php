@@ -12,28 +12,30 @@
     $conn = new mysqli($servername, $username, $password, $dbname);
     // Check connection
     if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+    	die("Connection failed: " . $conn->connect_error);
     }
 
-	$ansArr = array();
-	$answers = $_GET["choice"];
-	parse_str($_GET["choice"], $ansArr);
-	echo count($ansArr);
-	foreach($ansArr as $ans){
-		echo $ans;
-		$answers .= "ans=";
-		$answers .= $ans;
-		$answers .= "&";
+	$surVal = $_GET['ptsEarned'];
+	$answers = "";
+	$j = 1;
+	echo $_GET["choice$j"];
+	
+	for ($i=1; $i <= ($surVal/10); $i++) {
+		$choice = $_GET["choice$i"];
+		//echo $choice;
+		$answers .= "choice$i=" . $choice;
+		if ($i != $surVal/10) $answers .= "&";
 	}
+	echo $answers;
 
 	$surveyID = $_GET["surveyTaken"];
 	//echo "<p><font size='+1'>Thanks! You earned <strong>$surVal</strong> points!</font></p>";
 	//$updateCompleted = "INSERT INTO Completes(Completes_ID, user, survey_taken, answers) VALUES (Completes_ID, 111111, :surveyID, :answers)";
 	$stmt = $conn->prepare("INSERT INTO Completes(Completes_ID, user, survey_taken, answers) VALUES (?, ?, ?, ?)");
 	$userID = 123123;
-	$completesID = 7;
+	$completesID;
 	$stmt->bind_param('iiss', $completesID, $userID, $surveyID, $answers);
-	echo "Params bound";
+	//echo "Params bound";
 	if (!$stmt->execute()){
 		echo("Error description: " . $conn->error);
 	}

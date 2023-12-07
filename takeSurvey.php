@@ -37,7 +37,7 @@
     echo "<form action='congrats.php' method=get>"; // Upon submission, redirects to intermediary page
     $i=1;
     foreach ($Qarray as $question){
-        echo "Q$i: $question <input type=text size=1 name='choice'><br><br>";
+        echo "Q$i: $question <input name='choice$i' type=text size=1 ><br><br>";
         $i++;
     }
     echo "<input type=submit value='Submit Answers'>
