@@ -1,4 +1,3 @@
-
 <?php
 // Initialize the session
 session_start();
@@ -8,6 +7,8 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     header("location: login.php");
     exit;
 }
+
+
 
 require_once "config.php";
 
@@ -116,14 +117,14 @@ function getPrizes($conn)
 function getUserCredits($conn, $username)
 {
     $credits = 0;
-    $stmt = $conn->prepare("SELECT credits FROM User WHERE username = ?");
+    $stmt = $conn->prepare("SELECT currency FROM Users WHERE username = ?");
     $stmt->bind_param("s", $username);
     $stmt->execute();
     $result = $stmt->get_result();
 
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
-        $credits = $row['credits'];
+        $credits = $row['currency'];
     }
 
     $stmt->close();
@@ -133,13 +134,6 @@ function getUserCredits($conn, $username)
 // Read data from the database (using only the prizes table)
 $prizes = getPrizes($conn);
 
-// Display navigation buttons
-echo '<nav class="nav justify-content-center">';
-echo '<a href="welcome.php" class="nav-item nav-link active">Home</a>';
-echo '<a href="account-info.php" class="nav-item nav-link active">Account info</a>';
-echo '<a href="faculty-table.php" class="nav-item nav-link">Complete surveys</a>';
-echo '<a href="faculty-search.php" class="nav-item nav-link">orders/checkout</a>';
-echo '</nav>';
 
 // Display order page
 echo '<h1>Order Page</h1>';
@@ -154,7 +148,7 @@ echo '</div>';
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["prizes"])) {
     // Get the user ID
     $current_username = $_SESSION["username"];
-    $user_id_query = "SELECT User_ID FROM User WHERE username = ?";
+    $user_id_query = "SELECT User_ID FROM Users WHERE username = ?";
     $user_id_stmt = $conn->prepare($user_id_query);
     $user_id_stmt->bind_param("s", $current_username);
     $user_id_stmt->execute();
@@ -175,13 +169,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["prizes"])) {
             }
         }
     }
-    $current_username = $_SESSION["username"];
 
     // Check if the user has sufficient credits
     if ($current_credits >= $total_cost) {
         // Subtract the cost from the user's credits
         $new_credits = $current_credits - $total_cost;
-        $update_credits_query = "UPDATE User SET currency = ? WHERE User_ID = ?";
+        $update_credits_query = "UPDATE Users SET currency = ? WHERE User_ID = ?";
         $update_credits_stmt = $conn->prepare($update_credits_query);
         $update_credits_stmt->bind_param("ii", $new_credits, $user_id);
         $update_credits_stmt->execute();
@@ -255,152 +248,3 @@ $conn->close();
 </script>
 </body>
 </html>
-=======
-<?php
-// Initialize the session
-session_start();
-
-// Check if the user is logged in, if not then redirect him to login page
-if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
-    header("location: login.php");
-    exit;
-}
-
-require_once "config.php";
-
-$current_username = '';
-
-?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Page</title>
-
-    <!-- Add a simple CSS style for the popups -->
-    <style>
-    .popup {
-        display: none;
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        padding: 20px;
-        background-color: #fff;
-        border: 1px solid #ddd;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-        border-radius: 8px;
-        z-index: 1000;
-        max-width: 300px;
-        text-align: center;
-    }
-
-    .popup p {
-        margin: 0;
-    }
-
-    /* Style for buttons */
-    button {
-        padding: 10px;
-        margin: 5px;
-        background-color: #3498db;
-        color: #fff;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        transition: background-color 0.3s;
-    }
-
-    button:hover {
-        background-color: #2980b9;
-    }
-    </style>
-</head>
-<body>
-<?php
-// Database configuration
-$servername = "localhost";
-$username = "kguzy";
-$password = "s39SwfTz";
-$dbname = "kguzy";
-
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
-// Function to fetch data from the prizes table
-function getPrizes($conn) {
-    $sql = "SELECT * FROM prizes";
-    $result = $conn->query($sql);
-
-    if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            // Select specific attributes from the row
-            $prizes[] = [
-                'Prize_ID' => $row['Prize_ID'],
-                'name' => $row['name'],
-                'cost' => $row['cost'],
-            ];
-        }
-        return $prizes;
-    } else {
-        return [];
-    }
-}
-
-// Read data from the database (using only the prizes table)
-$prizes = getPrizes($conn);
-
-// Display order page
-echo '<h1>Order Page</h1>';
-echo '<table border="1">';
-echo '<tr><th>Prize ID</th><th>Name</th><th>Cost</th><th>Actions</th></tr>';
-
-foreach ($prizes as $prize) {
-    // Display prize details
-    echo '<tr>';
-    echo '<td>' . $prize['Prize_ID'] . '</td>';
-    echo '<td>' . $prize['name'] . '</td>';
-    echo '<td>' . $prize['cost'] . '</td>';
-
-    // Add buttons for actions
-    echo '<td>';
-    echo '<button onclick="showPopup(\'Order Placed!\')">Place Order</button>';
-    echo '<button onclick="showPopup(\'Order Canceled!\')">Cancel Order</button>';
-    echo '</td>';
-
-    echo '</tr>';
-}
-
-echo '</table>';
-
-// Close the database connection
-$conn->close();
-?>
-
-<!-- JavaScript for handling the popups -->
-<script>
-    function showPopup(message) {
-        // Create a popup element
-        var popup = document.createElement('div');
-        popup.className = 'popup';
-        popup.innerHTML = '<p>' . message . '</p>';
-
-        // Append the popup to the body
-        document.body.appendChild(popup);
-
-        // Close the popup after 2 seconds (adjust as needed)
-        setTimeout(function() {
-            document.body.removeChild(popup);
-        }, 2000);
-    }
-</script>
-
-</body>
-</html>
-
