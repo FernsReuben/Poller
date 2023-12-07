@@ -9,6 +9,15 @@
     </style>
 </head>
 <body>
+
+
+    <p><nav class="nav justify-content-center">
+    <a href="welcome.php" class="nav-item nav-link active">Home</a>
+    <a href="account-info.php" class="nav-item nav-link active">Account info</a>
+    <a href="surveyList.php" class="nav-item nav-link">Complete surveys</a>
+    <a href="order_page.php" class="nav-item nav-link">orders/checkout</a>
+</nav>
+
 <?php
     // Initialize the session
     session_start();
@@ -31,7 +40,7 @@
   }
 
 
-  // This part will need updated based on our login implementation
+  // Get the users username, currency, and ID
   $current_username = $_SESSION["username"];
   $getUserInfo = "SELECT currency, User_ID FROM User WHERE username = '$current_username'";
   $info = $conn->query($getUserInfo);
@@ -39,26 +48,19 @@
   $info = $info->fetch_assoc();
   $purse = $info["currency"];
   $userID = $info["User_ID"];
-
-  if ($_isset["ptsEarned"]) {
-    $earned = $_GET["ptsEarned"];
-    echo "<h2 align='center'><font size='-1'> Congrats! You earned <strong>$earned</strong> points!</font><h2>"; 
-  }
 ?>
 
 <p><h1 align="center"> Poller </h1></p>
 
-<p align="right"><font size="+1"><strong><?= $current_username?></strong>   $<?= $purse ?></font></p>
+<p align="right"><font size="+1"><strong><?= $current_username?></strong>   $<?= $purse ?>    </font></p>
 
 
 
 <p align="center"><br><u>List of Available Surveys</u></p>
 
 <?php
-    $currentSurvey = 1738;
-    $taking = 0;
-    //$takeSurveyButton = "<button onclick=window.location.href='https://dbdev.cs.kent.edu/~tbaker60/Poller/takeSurvey.php';> Take Survey </button><br>";
-
+    $currentSurvey = 1738; //setting random value in case of errors
+    
     $surveyQuery = "SELECT Survey_ID, company_name, value FROM Surveys";
     $result = $conn->query($surveyQuery);
     //$checkCompletedQuery = "SELECT survey_taken from Completes WHERE user = $userID and survey_taken = $currentSurvey";
@@ -72,10 +74,9 @@
             //echo $checkCompleted;
             $checkCompleted = $checkCompleted["survey_taken"];
             
-            if($checkCompleted != $currentSurvey) { //Survey has not been taken already
+            if($checkCompleted != $currentSurvey) { // if survey has not been taken already
+                // Display radio button and survey info
                 echo "<p align='center'><input type='radio' name='selection' value=$currentSurvey>";
-                //
-                //onclick=window.location.href='https://dbdev.cs.kent.edu/~tbaker60/Poller/takeSurvey.php?currentSurvey';
                 echo " ID: " . $row["Survey_ID"]. " - Company: " . $row["company_name"]. " - Value: " . $row["value"]."</p>";
             }
             

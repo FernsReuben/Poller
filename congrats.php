@@ -61,6 +61,7 @@ require_once "config.php";
 		echo("Error description 1: " . $conn->error);
 	}
 	//echo "<br><br>Hey completes insert worked!";
+	$completesStmt->close();
 	
 	// Setting new currency value
 	$getUserInfo = "SELECT currency from User WHERE username = '$current_username'";
