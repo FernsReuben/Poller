@@ -3,7 +3,7 @@
 session_start();
 
 // Check if the user is logged in, if not then redirect him to login page
-if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
+if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     header("location: login.php");
     exit;
 }
@@ -22,41 +22,55 @@ $current_username = '';
 
     <!-- Add a simple CSS style for the popups -->
     <style>
-    .popup {
-        display: none;
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        padding: 20px;
-        background-color: #fff;
-        border: 1px solid #ddd;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-        border-radius: 8px;
-        z-index: 1000;
-        max-width: 300px;
-        text-align: center;
-    }
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            z-index: 1000;
+            max-width: 300px;
+            text-align: center;
+        }
 
-    .popup p {
-        margin: 0;
-    }
+        .popup p {
+            margin: 0;
+        }
 
-    /* Style for buttons */
-    button {
-        padding: 10px;
-        margin: 5px;
-        background-color: #3498db;
-        color: #fff;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        transition: background-color 0.3s;
-    }
+        /* Style for buttons */
+        button {
+            padding: 10px;
+            margin: 5px;
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
 
-    button:hover {
-        background-color: #2980b9;
-    }
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
     </style>
 </head>
 <body>
@@ -76,7 +90,8 @@ if ($conn->connect_error) {
 }
 
 // Function to fetch data from the prizes table
-function getPrizes($conn) {
+function getPrizes($conn)
+{
     $sql = "SELECT * FROM prizes";
     $result = $conn->query($sql);
 
@@ -98,10 +113,25 @@ function getPrizes($conn) {
 // Read data from the database (using only the prizes table)
 $prizes = getPrizes($conn);
 
+// Display navigation buttons
+echo '<nav class="nav justify-content-center">';
+echo '<a href="welcome.php" class="nav-item nav-link active">Home</a>';
+echo '<a href="account-info.php" class="nav-item nav-link active">Account info</a>';
+echo '<a href="faculty-table.php" class="nav-item nav-link">Complete surveys</a>';
+echo '<a href="faculty-search.php" class="nav-item nav-link">orders/checkout</a>';
+echo '</nav>';
+
 // Display order page
 echo '<h1>Order Page</h1>';
-echo '<table border="1">';
-echo '<tr><th>Prize ID</th><th>Name</th><th>Cost</th><th>Actions</th></tr>';
+
+// Header buttons
+echo '<div>';
+echo '<button onclick="showPopup(\'Place Order\')">Place Order</button>';
+echo '<button onclick="showPopup(\'Cancel Order\')">Cancel Order</button>';
+echo '</div>';
+
+echo '<table>';
+echo '<tr><th>Prize ID</th><th>Name</th><th>Cost</th></tr>';
 
 foreach ($prizes as $prize) {
     // Display prize details
@@ -109,13 +139,6 @@ foreach ($prizes as $prize) {
     echo '<td>' . $prize['Prize_ID'] . '</td>';
     echo '<td>' . $prize['name'] . '</td>';
     echo '<td>' . $prize['cost'] . '</td>';
-
-    // Add buttons for actions
-    echo '<td>';
-    echo '<button onclick="showPopup(\'Order Placed!\')">Place Order</button>';
-    echo '<button onclick="showPopup(\'Order Canceled!\')">Cancel Order</button>';
-    echo '</td>';
-
     echo '</tr>';
 }
 
@@ -131,13 +154,13 @@ $conn->close();
         // Create a popup element
         var popup = document.createElement('div');
         popup.className = 'popup';
-        popup.innerHTML = '<p>' . message . '</p>';
+        popup.innerHTML = '<p>' + message + '</p>';
 
         // Append the popup to the body
         document.body.appendChild(popup);
 
         // Close the popup after 2 seconds (adjust as needed)
-        setTimeout(function() {
+        setTimeout(function () {
             document.body.removeChild(popup);
         }, 2000);
     }
