@@ -24,14 +24,15 @@ $current_username = $_SESSION["username"];
     <style>
         body{ font: sans-serif; text-align: center;}
 
+        /* style for popups. never got used
         .popup {
         visibility: hidden;
         position: center;
         display: inline-block;
         cursor: pointer;
-        }
+        }*/
 
-        /* The actual popup (appears on top) */
+        /*The actual popup (appears on top)
         .popup .popuptext {
         visibility: hidden;
         width: 160px;
@@ -45,9 +46,9 @@ $current_username = $_SESSION["username"];
         bottom: 125%;
         left: 50%;
         margin-left: -80px;
-        }
+        }*/
 
-        /* Popup arrow */
+        /* Popup arrow
         .popup .popuptext::after {
         content: "";
         position: absolute;
@@ -57,14 +58,14 @@ $current_username = $_SESSION["username"];
         border-width: 5px;
         border-style: solid;
         border-color: #555 transparent transparent transparent;
-        }
+        }*/
 
-        /* Toggle this class when clicking on the popup container (hide and show the popup) */
+        /* Toggle this class when clicking on the popup container (hide and show the popup)
         .popup .show {
         visibility: visible;
         }
 
-        /* Add animation (fade in the popup) */
+        // Add animation (fade in the popup) 
         @-webkit-keyframes fadeIn {
         from {opacity: 0;}
         to {opacity: 1;}
@@ -74,6 +75,7 @@ $current_username = $_SESSION["username"];
         from {opacity: 0;}
         to {opacity:1 ;}
         }
+        */
 
         /* Style for buttons */
         button {
@@ -105,6 +107,7 @@ $current_username = $_SESSION["username"];
             text-align: left;
         }
 
+        /* Style for modals was never used */
                 /* The Modal (background) */
         .modal {
         display: none; /* Hidden by default */
@@ -151,7 +154,7 @@ $current_username = $_SESSION["username"];
     <a href="order_page.php" class="nav-item nav-link">orders/checkout</a>
     </nav></p>
     
-    <!-- JavaScript for handling the popups -->
+    <!-- JavaScript for handling submission -->
     <script>
         /*function closePopup(type) {
             var popup=document.getElementByID(type);
@@ -161,8 +164,6 @@ $current_username = $_SESSION["username"];
         function placeOrder() {
             // Submit the form to process the order
             document.querySelector("form").submit();
-            document.location.href = "orderPlaced.php";
-        
         }
         function cancelOrder() {
             document.querySelector("form").reset();
@@ -265,10 +266,9 @@ echo '<h1>Order Page</h1>';
 // Process order form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["prizes"])) {
     //echo "In form processing  ";
+
     // Get the user ID
-
     $user_id_query = "SELECT User_ID FROM User WHERE username = ?";
-
     $user_id_stmt = $conn->prepare($user_id_query);
     $user_id_stmt->bind_param("s", $current_username);
     if(!$user_id_stmt->execute()){
@@ -299,14 +299,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["prizes"])) {
     // Check if the user has sufficient credits
     if ($current_credits >= $total_cost) {
         // Subtract the cost from the user's credits
+        // Updates User table
         $new_credits = $current_credits - $total_cost;
-        $update_credits_query = "UPDATE Users SET currency = ? WHERE User_ID = ?";
+        $update_credits_query = "UPDATE User SET currency = ? WHERE User_ID = ?";
         $update_credits_stmt = $conn->prepare($update_credits_query);
         $update_credits_stmt->bind_param("ii", $new_credits, $user_id);
-        $update_credits_stmt->execute();
+        //echo "credits updated";
+        if(!$update_credits_stmt->execute()){
+            echo "Credit check error: " . $conn->error;
+        }
 
-        // Insert orders into the Orders database
-        $insert_order_query = "INSERT INTO Orders (Order_ID, User_ID, Prize_ID) VALUES (?, ?, ?)";   // Needs Order_ID column included in both (arguments) lists
+        // Insert orders into the Orders table
+        $insert_order_query = "INSERT INTO Orders (Order_ID, User_ID, Prize_ID) VALUES (?, ?, ?)";
         $insert_order_stmt = $conn->prepare($insert_order_query);
         $orderID;
         foreach ($_POST["prizes"] as $prize_id) {
@@ -316,9 +320,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["prizes"])) {
             }
         }
 
+        
         // Close the prepared statements
         $update_credits_stmt->close();
         $insert_order_stmt->close();
+
+        // Redirect to intermediate page after processing
+        echo '<script>window.location.href="orderPlaced.php"</script>';
     } else {
         // User doesn't have sufficient credits, display an error message or handle it accordingly
         echo '<script>alert("Insufficient credits to place the order.");</script>';
@@ -330,28 +338,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["prizes"])) {
 
 echo '<form action="order_page.php" method="post">'; // Assuming you will process the order on the same page
 
-echo '<table>';
-echo '<tr><th>Name</th><th>Cost</th><th>Select</th></tr>';
+    echo '<table>';
+    echo '<tr><th>Name</th><th>Cost</th><th>Select</th></tr>';
 
-foreach ($prizes as $prize) {
-    // Display prize details with checkboxes
-    echo '<tr>';
-    echo '<td>' . $prize['name'] . '</td>';
-    echo '<td>' . $prize['cost'] . '</td>';
-    echo '<td><input type="checkbox" name="prizes[]" value="' . $prize['Prize_ID'] . '"></td>';
-    echo '</tr>';
-}
+    foreach ($prizes as $prize) {
+        // Display prize details with checkboxes
+        echo '<tr>';
+            echo '<td>' . $prize['name'] . '</td>';
+            echo '<td>' . $prize['cost'] . '</td>';
+            echo '<td><input type="checkbox" name="prizes[]" value="' . $prize['Prize_ID'] . '"></td>';
+        echo '</tr>';
+    }
 
-echo '</table>';
+    echo '</table>';
 
-echo '<div>';
-echo '<button type="submit" onclick="placeOrder()" href="orderPlaced.php">Place Order</button>';
-//echo "<a action='placeOrder(); href='welcome.php';' class='btn btn-warning'>Place Order</a>";
 
-//echo '<button onclick="showPopup(\'Cancel Order\')">Cancel Order</button>';
-echo "<button onclick='cancelOrder()'>Cancel Order</button>";
-echo '</div>';
-//echo '<input type="submit" value="Submit Order">';
+    echo '<div>';
+        echo '<button type="submit" action="placeOrder()">Place Order</button>';
+        echo "<button onclick='cancelOrder()'>Cancel Order</button>";
+    echo '</div>';
 
 echo '</form>';
 
