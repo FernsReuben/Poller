@@ -60,7 +60,7 @@ $current_username = $_SESSION["username"];
         }
 
         /* Toggle this class when clicking on the popup container (hide and show the popup) */
-        .show {
+        .poup .show {
         visibility: visible;
         -webkit-animation: fadeIn 1s;
         animation: fadeIn 1s
@@ -138,6 +138,26 @@ $current_username = $_SESSION["username"];
             text-align: left;
         }
     </style>
+    <!-- JavaScript for handling the popups -->
+    <script>
+        function closePopup(type) {
+            var popup=document.getElementByID(type);
+            popup.classlist.toggle("show");
+        }
+
+        function placeOrder() {
+            // Submit the form to process the order
+            document.querySelector("form").submit(); 
+            var popup=document.getElementByID("placedPopup");
+            popup.classlist.toggle("show");
+        }
+        function cancelOrder() {
+            document.querySelector("form").reset();
+            let cancelledMsg = "Order cancelled";
+            var popup=document.getElementByID("cancelledPopup");
+            popup.classlist.toggle("show");
+        }
+    </script>
 </head>
 <body>
 
@@ -305,53 +325,13 @@ echo '</form>';
 $conn->close();
 ?>
 
-<div class="popup" onclick='closePopup(this.id)'>Click to close
+<div class="popup" onclick='closePopup("placedPopup")'>Click to close
   <span class="popuptext" id="placedPopup">Order successfully placed!</span>
 </div>
 
-<div class="popup" onclick='closePopup(this.id)'>Click to close
+<div class="popup" onclick='closePopup("cancelledPopup")'>Click to close
   <span class="popuptext" id="cancelledPopup">Order cancelled</span>
 </div>
 
-
-
-<!-- JavaScript for handling the popups -->
-<script>
-    function showPopup(type) {
-        // Create a popup element
-        var popup=document.getElementByID(type);
-        popup.classlist.toggle("show");
-        /*const newPopupDiv = document.createElement("div");
-        const popupMsg = document.createTextNode(message);
-        newPopupDiv.appendChild(popupMsg);
-        //popup.innerHTML = '<p>' + message + '</p>';
-        const currPopupDiv = document.getElementByID("div1");
-
-        // Append the popup to the body
-        document.body.insertBefore(newPopupDiv, currPopopDiv);
-
-        // Close the popup after 2 seconds (adjust as needed)
-        setTimeout(function () {
-            document.body.removeChild(popupMsg);
-        }, 2000);*/
-    }
-    function closePopup(type) {
-        var popup=document.getElementByID(type);
-        popup.classlist.toggle("show");
-    }
-
-    function placeOrder() {
-        // Submit the form to process the order
-        document.querySelector("form").submit(); 
-        var popup=document.getElementByID("placedPopup");
-        popup.classlist.toggle("show");
-    }
-    function cancelOrder() {
-        document.querySelector("form").reset();
-        let cancelledMsg = "Order cancelled";
-        var popup=document.getElementByID("cancelledPopup");
-        popup.classlist.toggle("show");
-    }
-</script>
 </body>
 </html>
