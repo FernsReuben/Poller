@@ -1,13 +1,21 @@
 <html>
 <body>
 <?php
-  $servername = "localhost";
-  $username = "kguzy";
-  $password = "s39SwfTz";
-  $dbname = "kguzy";
+// Initialize the session
+session_start();
+ 
+// Check if the user is already logged in, if yes then redirect them to welcome page
+if(!isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] !== true){
+    header("location: welcome.php");
+    exit;
+}
+ 
+// Include config file
+require_once "config.php";
+ 
 
   // Create connection
-  $conn = new mysqli($servername, $username, $password, $dbname);
+  $conn = new mysqli(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
   // Check connection
   if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
@@ -15,7 +23,8 @@
 
   $userID = 123452;
   // This part will need updated based on our login implementation
-  $getUserInfo = "SELECT currency from User WHERE User_ID = $userID";
+  $current_username = $_SESSION["username"];
+  $getUserInfo = "SELECT currency from User WHERE username = $current_username";
   $purse = $conn->query($getUserInfo);
   $purse = $purse->fetch_assoc();
   $purse = $purse["currency"];
