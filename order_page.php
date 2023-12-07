@@ -8,6 +8,8 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     exit;
 }
 
+
+
 require_once "config.php";
 
 $current_username = '';
@@ -16,31 +18,68 @@ $current_username = '';
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
     <title>Order Page</title>
-
-    <!-- Add a simple CSS style for the popups -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
-        .popup {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            padding: 20px;
-            background-color: #fff;
-            border: 1px solid #ddd;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-            border-radius: 8px;
-            z-index: 1000;
-            max-width: 300px;
-            text-align: center;
-        }
+        body{ font: sans-serif; text-align: center;}
+    </style>
+</head>
+<body>
 
-        .popup p {
-            margin: 0;
-        }
+    <p><nav class="nav justify-content-center">
+    <a href="welcome.php" class="nav-item nav-link active">Home</a>
+    <a href="account-info.php" class="nav-item nav-link active">Account info</a>
+    <a href="surveyList.php" class="nav-item nav-link">Complete surveys</a>
+    <a href="order_page.php" class="nav-item nav-link">orders/checkout</a>
+</nav>
+    <!-- Add a simple CSS style for the popups -->
+
+    <div id="successModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <p>Order placed successfully!</p>
+    </div>
+    </div>
+    
+    <style>
+    /* Modal styles */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 300px;
+        text-align: center;
+        border-radius: 8px;
+    }
+
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
 
         /* Style for buttons */
         button {
@@ -132,13 +171,6 @@ function getUserCredits($conn, $username)
 // Read data from the database (using only the prizes table)
 $prizes = getPrizes($conn);
 
-// Display navigation buttons
-echo '<nav class="nav justify-content-center">';
-echo '<a href="welcome.php" class="nav-item nav-link active">Home</a>';
-echo '<a href="account-info.php" class="nav-item nav-link active">Account info</a>';
-echo '<a href="faculty-table.php" class="nav-item nav-link">Complete surveys</a>';
-echo '<a href="faculty-search.php" class="nav-item nav-link">orders/checkout</a>';
-echo '</nav>';
 
 // Display order page
 echo '<h1>Order Page</h1>';
@@ -185,7 +217,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["prizes"])) {
         $update_credits_stmt->execute();
 
         // Insert orders into the Orders database
-        $insert_order_query = "INSERT INTO Orders (User_ID, Prize_ID) VALUES (?, ?)";
+        $insert_order_query = "INSERT INTO Orders (User_ID, Prize_ID) VALUES (?, ?)";   // Needs Order_ID column included in both (arguments) lists
         $insert_order_stmt = $conn->prepare($insert_order_query);
 
         foreach ($_POST["prizes"] as $prize_id) {
@@ -231,24 +263,22 @@ $conn->close();
 
 <!-- JavaScript for handling the popups -->
 <script>
-    function showPopup(message) {
-        // Create a popup element
-        var popup = document.createElement('div');
-        popup.className = 'popup';
-        popup.innerHTML = '<p>' + message + '</p>';
+    // Function to open the modal
+    function openModal() {
+        document.getElementById('successModal').style.display = 'block';
+    }
 
-        // Append the popup to the body
-        document.body.appendChild(popup);
-
-        // Close the popup after 2 seconds (adjust as needed)
-        setTimeout(function () {
-            document.body.removeChild(popup);
-        }, 2000);
+    // Function to close the modal
+    function closeModal() {
+        document.getElementById('successModal').style.display = 'none';
     }
 
     function placeOrder() {
         // Submit the form to process the order
         document.querySelector("form").submit();
+
+        // Open the success modal
+        openModal();
     }
 </script>
 </body>
