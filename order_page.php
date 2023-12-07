@@ -266,7 +266,9 @@ echo '<h1>Order Page</h1>';
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["prizes"])) {
     //echo "In form processing  ";
     // Get the user ID
+
     $user_id_query = "SELECT User_ID FROM User WHERE username = ?";
+
     $user_id_stmt = $conn->prepare($user_id_query);
     $user_id_stmt->bind_param("s", $current_username);
     if(!$user_id_stmt->execute()){
@@ -290,13 +292,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["prizes"])) {
             }
         }
     }
+
     //echo "Total: $total_cost";
+
 
     // Check if the user has sufficient credits
     if ($current_credits >= $total_cost) {
         // Subtract the cost from the user's credits
         $new_credits = $current_credits - $total_cost;
-        $update_credits_query = "UPDATE User SET currency = ? WHERE User_ID = ?";
+        $update_credits_query = "UPDATE Users SET currency = ? WHERE User_ID = ?";
         $update_credits_stmt = $conn->prepare($update_credits_query);
         $update_credits_stmt->bind_param("ii", $new_credits, $user_id);
         $update_credits_stmt->execute();
