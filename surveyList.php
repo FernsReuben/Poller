@@ -52,7 +52,7 @@
 
 <p><h1 align="center"> Poller </h1></p>
 
-<p align="right"><font size="+1"><strong><?= $current_username?></strong>   $<?= $purse ?></font></p>
+<p align="right"><font size="+1"><strong><?= $current_username?></strong>   $<?= $purse ?>    </font></p>
 
 
 

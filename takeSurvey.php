@@ -48,7 +48,7 @@ require_once "config.php";
 ?>
 
 <p><h1 align="center"> Poller </h1></p>
-<p align="right"><strong><font size="+1"><?= $current_username?>  $<?= $purse ?></font></strong></p>
+<p align="right"><strong><font size="+1"><?= $current_username?>  $<?= $purse ?>    </font></strong></p>
 
     <p align="center"><strong><?= $company ?> Survey:</strong> For each statement, enter the degree to which you agree from 0 to 5</p>
 
