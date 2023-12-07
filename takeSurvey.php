@@ -1,4 +1,13 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Taking Survey</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body{ font: sans-serif; text-align: center;}
+    </style>
+</head>
 <body>
 
 <?php
@@ -53,7 +62,7 @@ require_once "config.php";
         echo "Q$i: $question <input name='choice$i' type=text size=1 ><br><br>";
         $i++;
     }
-    echo "<input type=submit value='Submit Answers'>
+    echo "<input type=submit class='btn btn-primary' value='Submit Answers'>
         <input type='hidden' name='ptsEarned' value=$surVal>
         <input type='hidden' name='surveyTaken' value=$surveyID>";
     //echo "<input type='hidden' name='ptsEarned' value=$surVal>";
