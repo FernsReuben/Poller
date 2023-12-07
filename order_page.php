@@ -115,14 +115,14 @@ function getPrizes($conn)
 function getUserCredits($conn, $username)
 {
     $credits = 0;
-    $stmt = $conn->prepare("SELECT credits FROM User WHERE username = ?");
+    $stmt = $conn->prepare("SELECT currency FROM Users WHERE username = ?");
     $stmt->bind_param("s", $username);
     $stmt->execute();
     $result = $stmt->get_result();
 
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
-        $credits = $row['credits'];
+        $credits = $row['currency'];
     }
 
     $stmt->close();
@@ -153,7 +153,7 @@ echo '</div>';
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["prizes"])) {
     // Get the user ID
     $current_username = $_SESSION["username"];
-    $user_id_query = "SELECT User_ID FROM User WHERE username = ?";
+    $user_id_query = "SELECT User_ID FROM Users WHERE username = ?";
     $user_id_stmt = $conn->prepare($user_id_query);
     $user_id_stmt->bind_param("s", $current_username);
     $user_id_stmt->execute();
@@ -179,7 +179,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["prizes"])) {
     if ($current_credits >= $total_cost) {
         // Subtract the cost from the user's credits
         $new_credits = $current_credits - $total_cost;
-        $update_credits_query = "UPDATE User SET credits = ? WHERE User_ID = ?";
+        $update_credits_query = "UPDATE Users SET currency = ? WHERE User_ID = ?";
         $update_credits_stmt = $conn->prepare($update_credits_query);
         $update_credits_stmt->bind_param("ii", $new_credits, $user_id);
         $update_credits_stmt->execute();
