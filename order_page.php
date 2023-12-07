@@ -150,53 +150,25 @@ $current_username = $_SESSION["username"];
     <a href="surveyList.php" class="nav-item nav-link">Complete surveys</a>
     <a href="order_page.php" class="nav-item nav-link">orders/checkout</a>
     </nav></p>
-    <!-- Add a simple CSS style for the popups
-    <style>
-        .popup {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            padding: 20px;
-            background-color: #fff;
-            border: 1px solid #ddd;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-            border-radius: 8px;
-            z-index: 1000;
-            max-width: 300px;
-            text-align: center;
-        }
-
-        .popup p {
-            margin: 0;
-        }
-
-        
-    </style>-->
+    
     <!-- JavaScript for handling the popups -->
     <script>
-        function closePopup(type) {
+        /*function closePopup(type) {
             var popup=document.getElementByID(type);
             popup.classlist.toggle("show");
-        }
+        }*/
 
         function placeOrder() {
             // Submit the form to process the order
-            document.querySelector("form").submit(); 
-            
-
-            /*var popup=document.getElementByID("placedPopup");
-            popup.classlist.toggle("show");*/
+            document.querySelector("form").submit();
+            document.location.href = "orderPlaced.php";
+        
         }
         function cancelOrder() {
             document.querySelector("form").reset();
-            let cancelledMsg = "Order cancelled";
-            var popup=document.getElementByID("cancelledPopup");
-            popup.classlist.toggle("show");
         }
 
-            var modal = document.getElementByID("placedModal");
+            /*var modal = document.getElementByID("placedModal");
             var btn = document.getElementByID("placeBtn");
             var span = document.getElementsByClassName("close")[0];
 
@@ -212,7 +184,7 @@ $current_username = $_SESSION["username"];
                 if (event.target == modal) {
                     modal.style.display = "none";
                 }
-            }
+            }*/
     </script>
 </head>
 <body>
@@ -369,16 +341,12 @@ foreach ($prizes as $prize) {
 echo '</table>';
 
 echo '<div>';
-echo '<button id="placeBtn" type="submit" action="placeOrder()">Place Order</button>';
-echo "<div id='placedModal' class='modal'>";
-echo '<div class="modal-content">
-    <span class="close">&times;</span>
-    <p>Order placed.</p>
-    </div>';
-echo '</div>';
+echo '<button type="submit" onclick="placeOrder()" href="orderPlaced.php">Place Order</button>';
+//echo "<a action='placeOrder(); href='welcome.php';' class='btn btn-warning'>Place Order</a>";
+
 //echo '<button onclick="showPopup(\'Cancel Order\')">Cancel Order</button>';
 echo "<button onclick='cancelOrder()'>Cancel Order</button>";
-//echo '</div>';
+echo '</div>';
 //echo '<input type="submit" value="Submit Order">';
 
 echo '</form>';
