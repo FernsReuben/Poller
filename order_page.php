@@ -258,8 +258,4 @@ $conn->close();
     }
 </script>
 </body>
-<<<<<<< HEAD
 </html>
-=======
-</html>
->>>>>>> Nick-workspace
